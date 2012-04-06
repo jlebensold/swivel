@@ -1,0 +1,112 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+  <head> 
+    <meta charset="utf-8"> 
+    <title>Decision Tree</title> 
+    <meta name="description" content=""> 
+    <meta name="author" content=""> 
+
+    <!-- Le styles --> 
+    <link rel="stylesheet" type="text/css" href="bootstrap/application.css" >
+		<script src="js/jquery-1.7.2.min.js"></script> 
+		<script src="js/underscore.min.js"></script> 
+		<script src="js/bootstrap.min.js"></script> 
+		<script src="js/backbone.min.js"></script> 
+		<script src="js/tree.js"></script> 
+		<script src="js/GraphView.js"></script> 
+		<script src="js/Node.js"></script> 
+		<script src="js/Branch.js"></script> 
+  </head> 
+ 
+  <body>
+	<div class="navbar navbar-fixed-top"> 
+      <div class="navbar-inner">
+		 	<a class="brand" href="#">Decision Tree</a>
+	    <div class="container"> 
+
+	      <ul class="nav"> 
+	        <li class="active"><a href="#">Home</a></li> 
+	      </ul> 
+	    </div> 
+	  </div> 
+	</div>
+	<div class="container">
+			<section class="row" style="margin-top: 40px;">
+				<h2>Decision Tree</h2>
+				<div class="tree" id="tree" style="background: #CFCFCF; width: 100%; heightype:500px;">
+
+				</div>
+			</section>
+	  	<footer> 
+      </footer> 
+	 
+    </div> <!-- /container -->
+		<script>
+			var tree = {
+				branches:	[
+					{
+						txt: "Engage Vendor",
+						key:"engage"
+					},
+					{
+						txt: "Present RFP to business",
+						key:"present-to-business"
+					},
+					{
+						txt: "Business approval",
+						key:"bus-approval"
+					},
+					{
+						txt:	"Business declines",
+						key:		"bus-decline"
+					}
+				],
+				nodes: [
+					{
+						type: "decision",
+						inc: [],
+						out: ["engage"]
+					},
+					{
+						type: "decision",
+						inc: ["engage"],
+						out: ["present-to-business"]
+					},
+					{
+						type:		"chance",
+						inc:	["present-to-business"],
+						out:	["bus-approval","bus-decline"]
+					},
+					{
+						type:		"end",
+						inc:	["bus-approval"],
+						out: []
+					},
+					{
+						type:		"end",
+						inc:	["bus-decline"],
+						out: []
+					}
+				]
+			};
+		</script>
+		<script>
+			 $(function() { 
+				 window.app = new AppView({el: $("#tree")});
+				 window.app.setTree(tree);
+				 window.app.render();
+			 });
+		 </script>
+		 <style>
+			.node {
+				border: 1px solid #000;
+				background: #FFF;
+				width: 20px;
+				height: 20px;
+				overflow: hidden;
+				clear: left;
+				float: left;
+			}
+		 </style>
+	</body> 
+</html>

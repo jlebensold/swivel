@@ -1,0 +1,19 @@
+.area {
+  fill: lightsteelblue;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.rect {
+	fill: none;
+	stroke: black;
+  shape-rendering: crispEdges;
+}
+.tile {
+	stroke: black;
+  fill: red;
+  stroke-width: 1.5px;
+}
