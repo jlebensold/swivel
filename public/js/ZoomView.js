@@ -1,5 +1,6 @@
 window.ZoomView = Backbone.View.extend({
 	initialize: function() {
+		_.bindAll(this,'render','zoomLevel','zoomIn','zoomOut','renderTiles','updateTileSize');
 		this.collection = new TileCollection();
 		this.zoom = 4;
 		this.w = 450;
@@ -8,8 +9,19 @@ window.ZoomView = Backbone.View.extend({
 		this.y = d3.scale.linear().range([this.h, 0]),
 		this.vis = null;
 
-		_.bindAll(this,'render','zoomLevel','zoomIn','zoomOut','renderTiles');
+    this.tileSize = 450;
+
+    this.collection.bind('add', this.updateTileSize);
 	},
+
+  updateTileSize: function() {
+    var w = Math.floor(this.w/this.collection.length);
+    var h = Math.floor(this.h/this.collection.length);
+
+    if (w > h) this.tileSize =  h;
+    else this.tileSize = w;
+  },
+
 	render: function() {
 		var p = 2;
 		this.vis = d3.select(this.el)
@@ -19,45 +31,13 @@ window.ZoomView = Backbone.View.extend({
 		  .append("g")
     		.attr("transform", "translate(" + p + "," + p + ")");
 
-		this.vis.append("rect")
-			.attr("class","rect")
-			.attr("width", this.w)
-			.attr("height", this.h);
-
-	  this.renderTiles();
-		
-	},
-
-	renderTiles: function(t) {
-		symbol = d3.scale.ordinal().range(d3.svg.symbolTypes);
-		var x = this.x;
-		var y = this.x;
-	
-		this.vis.data(this.collection.toJSON())
-			.append("rect")
-				.attr("class", "tile")
-				.attr("height",300)
-				.attr("width",100)
-				.text("sd")
-			.transition()
-        .duration(750)
-        .attr("x", 100)
-        .style("stroke-opacity", 1);
-	 
     this.collection.each(function(tile) {
-      this.vis.append("text")
-        .attr("dy", ".35em")
-        .attr("text-anchor", "middle")
-        .text(tile.get("meta").title);
+      this.vis.append("rect")
+        .attr("class","rect")
+        .attr("width", this.tileSize)
+        .attr("height", this.tileSize);
     },this);
 
-		
-		this.vis.selectAll("text").transition()
-			.duration(800)
-			.attr("x",100)
-			.attr("y",100);
-			
-		
 	},
 
 	zoomLevel: function() {

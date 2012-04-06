@@ -1,0 +1,30 @@
+
+GridView
+TileCollection
+Tile
+
+Given a list of tiles
+THey should be drawn at a resonable width
+
+Button is clicked
+New grid is created and transition is done
+
+
+____
+
+__ __
+
+
+tWidth / widthGrid = rowLength
+rowCount = 0
+x = tWidth * index 
+
+if (index % rowlength) == 0
+  y = tHeight * rowCount
+    rowCount ++
+
+
+    var data =  [{x:0, y: 0, w:10, h:10}]
+
+
+    d3.awesome.data(data).enter().append("rect").needtofigureouthowtousedata().
