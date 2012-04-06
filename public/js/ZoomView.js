@@ -44,10 +44,12 @@ window.ZoomView = Backbone.View.extend({
         .attr("x", 100)
         .style("stroke-opacity", 1);
 	 
-		this.vis.append("text")
-      .attr("dy", ".35em")
-      .attr("text-anchor", "middle")
-      .text("foo");
+    this.collection.each(function(tile) {
+      this.vis.append("text")
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(tile.get("meta").title);
+    },this);
 
 		
 		this.vis.selectAll("text").transition()
