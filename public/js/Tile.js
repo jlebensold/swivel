@@ -10,7 +10,9 @@ window.Tile = Backbone.Model.extend({
 
 	}
 });
-
+window.Tile.bind("remove", function() {
+  this.destroy();
+});
 window.TileCollection = Backbone.Collection.extend({
 	model: Tile
 });
