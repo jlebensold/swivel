@@ -1,4 +1,7 @@
+*Getting Started* 
+rake jasmine
 
+*Notes*
 GridView
 TileCollection
 Tile

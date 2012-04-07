@@ -1,6 +1,6 @@
 window.ZoomView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','zoomLevel','zoomIn','zoomOut','renderTiles','updateTileSize');
+		_.bindAll(this,'render','zoomLevel','zoomIn','zoomOut','updateTileSize');
 		this.collection = new TileCollection();
 		this.zoom = 4;
 		this.w = 450;
