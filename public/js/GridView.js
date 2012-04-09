@@ -1,6 +1,6 @@
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','removeTile','addTile','updateVis','loadData');
+		_.bindAll(this,'render','rowsAndColumns','removeTile','addTile','updateVis','loadData','resizeCurrentTiles');
 		this.collection = new TileCollection();
 		this.w = 450;
 		this.h = 460;
@@ -20,7 +20,6 @@ window.GridView = Backbone.View.extend({
         var q = (this.h + (this.w * zoom)) * margin;
         var r = -1 * (this.h * this.w);
         var tileSize = ((-1 * q) + Math.sqrt(Math.pow(q, 2) - (4 * p * r))) / (2 * p);
-
 				//TODO this is too conservative
         return {
             rows:  Math.floor(this.h / tileSize * zoom),
@@ -30,11 +29,23 @@ window.GridView = Backbone.View.extend({
   },
 	addTile: function() {
 		this.loadData();
+		this.resizeCurrentTiles();
 		this.updateVis();
+	},
+	resizeCurrentTiles: function() {
+	var rc = this.rowsAndColumns();
+	this.vis.selectAll(".rect")
+      .data(this.data)
+			.transition().duration(1000)
+			.attr("height",rc.tileSize)
+			.attr("width",rc.tileSize)
+  		.attr("x", function(d) { return d.x; } )
+      .attr("y", function(d) { return d.y; } );
 	},
 
 	removeTile: function(t) {
 		this.loadData();
+		this.resizeCurrentTiles();
 		this.updateVis();
 	},
 
@@ -82,8 +93,6 @@ window.GridView = Backbone.View.extend({
       .data(this.data)
     .enter().append("rect")
       .attr("class", "rect")
-      .attr("data-row", function(d) { return d.row ; } )
-      .attr("data-col", function(d) { return d.col ; } )
       .attr("height", function(d) { return d.h ; } )
       .attr("width", function(d) { return d.w; } )
       .attr("x", function(d) { return - d.x; } )

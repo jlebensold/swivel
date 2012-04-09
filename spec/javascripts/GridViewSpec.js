@@ -42,8 +42,26 @@ describe("GridView", function() {
 		
 		$("#testbed").html(gv.render().el);
 		expect($("body svg rect").length).toEqual(7);
-	
-//		gv.collection.remove(gv.collection.first());
-//		gv.collection.remove(gv.collection.first());
+		gv.collection.remove(gv.collection.first());
+		setTimeout(function(){
+				expect($("body svg rect").length).toEqual(6);
+			},1000);
+	});
+
+	it("should redraw proportionally when new items enter the gridview", function() {
+		gv = new GridView();
+		_.each(d3.range(0,7),function(i) {
+			gv.collection.add({meta:{title:"A"+i}});
+		},this);
+		$("#testbed").html(gv.render().el);
+
+		setTimeout(function() {
+			_.each(d3.range(0,7),function(i) {
+			gv.collection.add({meta:{title:"A"+i}});
+			},this);
+		},1000);
+		
+
+
 	});
 });
