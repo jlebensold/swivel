@@ -59,8 +59,14 @@ describe("GridView", function() {
 			_.each(d3.range(0,7),function(i) {
 			gv.collection.add({meta:{title:"A"+i}});
 			},this);
+			setTimeout(function() {
+				expect($(gv.vis.select("rect")[0]).attr("height")).toEqual(102);
+			},1000);
 		},1000);
-		
+
+	});
+
+	it("should draw the template on the card", function() {
 
 
 	});
