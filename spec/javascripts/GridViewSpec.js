@@ -67,7 +67,11 @@ describe("GridView", function() {
 	});
 
 	it("should draw the template on the card", function() {
-
-
+			gv = new GridView();
+		_.each(d3.range(0,7),function(i) {
+			gv.collection.add({meta:{title:"A"+i}});
+		},this);
+		$("#testbed").html(gv.render().el);
+		expect($(gv.vis.select("text")[0]).text()).toEqual("A0");
 	});
 });

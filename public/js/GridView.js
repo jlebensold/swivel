@@ -1,6 +1,6 @@
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','removeTile','addTile','updateVis','loadData','resizeCurrentTiles','drawText','removeText','resizeText');
+		_.bindAll(this,'render','rowsAndColumns','removeTile','addTile','updateVis','loadData','resizeCurrentTiles');
 		this.collection = new TileCollection();
 		this.w = 450;
 		this.h = 460;
@@ -41,6 +41,13 @@ window.GridView = Backbone.View.extend({
 			.attr("width",rc.tileSize)
   		.attr("x", function(d) { return d.x; } )
       .attr("y", function(d) { return d.y; } );
+
+	this.vis.selectAll(".tile-group text")
+			.data(this.data)
+			.transition().duration(900)
+  		.attr("x", function(d) { return d.x + d.w / 2; } )
+      .attr("y", function(d) { return d.y + d.h / 2; } );
+
 	},
 
 	removeTile: function(t) {
@@ -58,14 +65,15 @@ window.GridView = Backbone.View.extend({
 					if (lastCol > col)
 						row++;
 					lastCol = col;
-
+					console.log(t.get('meta').title);
 					return { 
 									 h: rc.tileSize, 
 									 w: rc.tileSize, 
 									 x: col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))), 
 									 y: row * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
 									 row: row,
-									 col: col
+									 col: col,
+									 model: t
 								 };
 
 			},this);
@@ -89,40 +97,34 @@ window.GridView = Backbone.View.extend({
 	},
 
 	updateVis: function(){
-		this.vis.selectAll(".rect")
+		var enter = this.vis.selectAll(".rect")
       .data(this.data)
-    .enter().append("g").attr("class","tile-group").append("rect")
+   		.enter().append("g").attr("class","tile-group");
+			
+		enter.append("text")
+			.text(function(d) { return d.model.get('meta').title; })
+      .attr("x", function(d) { return (0.5 - Math.random())*10000; } )
+      .attr("y", function(d) { return (0.5 - Math.random())*10000; } )
+		.transition().duration(700)
+      .attr("x", function(d) { return d.x + d.w / 2; } )
+      .attr("y", function(d) { return d.y + d.h / 2; } );
+		
+		
+		enter.append("rect")
       .attr("class", "rect")
       .attr("height", function(d) { return d.h ; } )
       .attr("width", function(d) { return d.w; } )
       .attr("x", function(d) { return (0.5 - Math.random())*1000; } )
       .attr("y", function(d) { return (0.5 - Math.random())*1000; } )
-			.call(this.drawText)
 		.transition().duration(700)
       .attr("x", function(d) { return d.x; } )
       .attr("y", function(d) { return d.y; } );
+		
+		
+		
 		this.vis.selectAll(".rect").data(this.data).exit()
 			.transition().duration(700)
 	    .attr("x", function(d) { return (0.5 - Math.random())*10000; } )
       .attr("y", function(d) { return (0.5 - Math.random())*10000; } );
-	},
-
-	drawText: function() {
-		return;
-		this.vis.selectAll(".tile-group")
-				.data(this.data)
-			.append("text")
-	      .attr("x", function(d) { return d.x + 50; } ) 			
-	      .attr("class", 'title') 
-				.text("foo")
-	      .attr("y", function(d) { return d.y + 50; } );
-	},
-	
-	resizeText: function() {
-
-	},
-
-	removeText: function(d) {
-		console.log(d);
 	}
 });
