@@ -16,3 +16,6 @@ window.Tile.bind("remove", function() {
 window.TileCollection = Backbone.Collection.extend({
 	model: Tile
 });
+window.TileCollection.comparator = function(t) {
+  return t.get("meta").title;
+};

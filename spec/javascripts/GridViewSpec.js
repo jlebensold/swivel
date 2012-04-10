@@ -2,7 +2,6 @@ describe("GridView", function() {
 	beforeEach(function() {
 		$("#testbed").remove();
 		$("body").append("<div id='testbed'></div>");
-//		zv = new ZoomView({el: $("#testbed")});
 		window.gv = new GridView({el: $("#testbed")});
 	});
 
@@ -73,5 +72,39 @@ describe("GridView", function() {
 		},this);
 		$("#testbed").html(gv.render().el);
 		expect($(gv.vis.select("text")[0]).text()).toEqual("A0");
+	});
+
+
+
+	it("should trigger an event when a tile is clicked",function() {
+			gv = new GridView();
+		_.each(d3.range(0,7),function(i) {
+			gv.collection.add({meta:{title:"A"+i}});
+		},this);
+
+		$("#testbed").html(gv.render().el);
+		gv.bind('tileClick',function(d) {
+			$("#testbed").append("<div><pre>"+ JSON.stringify(d.toJSON())+"</pre></div>");
+		});
+		gv.trigger('tileClick',gv.collection.first());
+		expect($("#testbed pre").html()).toEqual('{"meta":{"title":"A0"},"template":""}');
+
+	});
+
+	it("should be able to sort against a particular facet",function() {
+			gv = new GridView();
+		_.each(d3.range(0,7),function(i) {
+			gv.collection.add({meta:{title:"A"+i, description: parseInt(7 - i)+ "B"}});
+		},this);
+		$("#testbed").html(gv.render().el);
+		console.log(gv.collection.first().get('meta').description);
+		gv.collection.comparator = function(t) {
+			return t.get("meta").description;
+		};
+		setTimeout(function()
+			{
+		gv.collection.sort();
+		console.log(gv.collection.first().get('meta').description);
+			},1400);
 	});
 });

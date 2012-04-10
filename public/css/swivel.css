@@ -8,7 +8,7 @@
   stroke-width: 1.5px;
 }
 .rect {
-	fill: none;
+	fill: white;
 	stroke: black;
   shape-rendering: crispEdges;
 }

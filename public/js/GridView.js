@@ -1,6 +1,6 @@
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','removeTile','addTile','updateVis','loadData','resizeCurrentTiles');
+		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','updateVis','loadData','resizeCurrentTiles','tileClicked');
 		this.collection = new TileCollection();
 		this.w = 450;
 		this.h = 460;
@@ -11,6 +11,7 @@ window.GridView = Backbone.View.extend({
    	this.margin = 0.7;
 		this.collection.bind('add',this.addTile);
 		this.collection.bind('remove',this.removeTile);
+		this.collection.bind('reset',this.sortTiles);
 		this.render();
 	},
 	rowsAndColumns: function() {
@@ -49,6 +50,12 @@ window.GridView = Backbone.View.extend({
       .attr("y", function(d) { return d.y + d.h / 2; } );
 
 	},
+	sortTiles: function() {
+		this.vis.sort(function(a,b){ return [a.model.get('meta').description,b.model.get('meta').description].sort();  });
+		this.loadData();
+		this.resizeCurrentTiles();
+		this.updateVis();
+	},
 
 	removeTile: function(t) {
 		this.loadData();
@@ -65,7 +72,6 @@ window.GridView = Backbone.View.extend({
 					if (lastCol > col)
 						row++;
 					lastCol = col;
-					console.log(t.get('meta').title);
 					return { 
 									 h: rc.tileSize, 
 									 w: rc.tileSize, 
@@ -73,7 +79,8 @@ window.GridView = Backbone.View.extend({
 									 y: row * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
 									 row: row,
 									 col: col,
-									 model: t
+									 model: t,
+									 cid: t.cid
 								 };
 
 			},this);
@@ -100,16 +107,8 @@ window.GridView = Backbone.View.extend({
 		var enter = this.vis.selectAll(".rect")
       .data(this.data)
    		.enter().append("g").attr("class","tile-group");
-			
-		enter.append("text")
-			.text(function(d) { return d.model.get('meta').title; })
-      .attr("x", function(d) { return (0.5 - Math.random())*10000; } )
-      .attr("y", function(d) { return (0.5 - Math.random())*10000; } )
-		.transition().duration(700)
-      .attr("x", function(d) { return d.x + d.w / 2; } )
-      .attr("y", function(d) { return d.y + d.h / 2; } );
-		
-		
+		var self = this;
+	
 		enter.append("rect")
       .attr("class", "rect")
       .attr("height", function(d) { return d.h ; } )
@@ -119,12 +118,28 @@ window.GridView = Backbone.View.extend({
 		.transition().duration(700)
       .attr("x", function(d) { return d.x; } )
       .attr("y", function(d) { return d.y; } );
+
+
+		enter.append("text")
+			.text(function(d) { return d.model.get('meta').title; })
+      .attr("x", function(d) { return (0.5 - Math.random())*10000; } )
+      .attr("y", function(d) { return (0.5 - Math.random())*10000; } )
+		.transition().duration(700)
+      .attr("x", function(d) { return d.x + d.w / 2; } )
+      .attr("y", function(d) { return d.y + d.h / 2; } );
 		
-		
-		
+			
 		this.vis.selectAll(".rect").data(this.data).exit()
 			.transition().duration(700)
 	    .attr("x", function(d) { return (0.5 - Math.random())*10000; } )
       .attr("y", function(d) { return (0.5 - Math.random())*10000; } );
+
+		 this.vis.selectAll("rect").on("click",function(d) {
+				self.tileClicked(d.model);
+			});
+	},
+
+	tileClicked: function(d) {
+		this.trigger('tileClick',d);
 	}
 });
