@@ -116,7 +116,7 @@ window.GridView = Backbone.View.extend({
 
 	updateVis: function(){
 
-		var rects = this.vis.selectAll("tiles")
+		var rects = this.vis.selectAll(".tiles")
       .data(this.data, function(d) {return d.cid})
    		.enter()
       .append("g")
