@@ -142,9 +142,10 @@ window.GridView = Backbone.View.extend({
 			
 		this.vis.selectAll(".tiles").data(this.data).exit().remove();
 
-		 this.vis.selectAll("rect").on("click",function(d) {
-				self.tileClicked(d.model);
-			});
+    var self = this;
+    this.vis.selectAll("rect").on("click",function(d) {
+      self.tileClicked(d.model);
+    });
 	},
 
 	tileClicked: function(d) {
