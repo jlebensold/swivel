@@ -1,6 +1,16 @@
+window.BWC = {
+  zeroPad: function (value, options) {
+    options || (options = {});
+    var length = options.length || 10;
+    var zeros = "";
+    for (var i = 0; i < length - (value.toString()).length; i++) zeros = zeros + "0";
+    return zeros + value;
+  }
+}
+
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','updateVis','loadData','resizeCurrentTiles','tileClicked');
+		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','updateVis','loadData','resizeCurrentTiles','tileClicked','bleh');
 		this.collection = new TileCollection();
 		this.w = 450;
 		this.h = 460;
@@ -33,6 +43,7 @@ window.GridView = Backbone.View.extend({
 		this.resizeCurrentTiles();
 		this.updateVis();
 	},
+
 	resizeCurrentTiles: function() {
 	var rc = this.rowsAndColumns();
 	this.vis.selectAll(".rect")
@@ -51,10 +62,10 @@ window.GridView = Backbone.View.extend({
 
 	},
 	sortTiles: function() {
-		this.vis.sort(function(a,b){ return [a.model.get('meta').description,b.model.get('meta').description].sort();  });
+
 		this.loadData();
-		this.resizeCurrentTiles();
-		this.updateVis();
+		this.bleh();
+	//	this.resizeCurrentTiles();
 	},
 
 	removeTile: function(t) {
@@ -103,9 +114,23 @@ window.GridView = Backbone.View.extend({
 			return this;
 	},
 
+  bleh: function() {
+     this.vis.selectAll(".rect")
+      .data(this.data, function(d) {return d.cid})
+      .transition().duration(700)
+        .attr("x", function(d) { console.log(d.cid, d.x);return d.x; } )
+        .attr("y", function(d) { return d.y; } );
+
+     this.vis.selectAll("text")
+      .data(this.data, function(d) {return d.cid})
+      .transition().duration(700)
+        .attr("x", function(d) { return d.x + d.w / 2; } )
+        .attr("y", function(d) { return d.y + d.h / 2; } );
+  },
+
 	updateVis: function(){
 		var enter = this.vis.selectAll(".rect")
-      .data(this.data)
+      .data(this.data, function(d) {return d.cid})
    		.enter().append("g").attr("class","tile-group");
 		var self = this;
 	
@@ -116,7 +141,7 @@ window.GridView = Backbone.View.extend({
       .attr("x", function(d) { return (0.5 - Math.random())*1000; } )
       .attr("y", function(d) { return (0.5 - Math.random())*1000; } )
 		.transition().duration(700)
-      .attr("x", function(d) { return d.x; } )
+      .attr("x", function(d) { console.log(d.cid,d.x);return d.x; } )
       .attr("y", function(d) { return d.y; } );
 
 

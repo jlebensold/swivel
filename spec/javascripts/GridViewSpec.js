@@ -1,3 +1,13 @@
+window.BWC = {
+  zeroPad: function (value, options) {
+    options || (options = {});
+    var length = options.length || 10;
+    var zeros = "";
+    for (var i = 0; i < length - (value.toString()).length; i++) zeros = zeros + "0";
+    return zeros + value;
+  }
+}
+
 describe("GridView", function() {
 	beforeEach(function() {
 		$("#testbed").remove();
@@ -93,18 +103,22 @@ describe("GridView", function() {
 
 	it("should be able to sort against a particular facet",function() {
 			gv = new GridView();
-		_.each(d3.range(0,7),function(i) {
-			gv.collection.add({meta:{title:"A"+i, description: parseInt(7 - i)+ "B"}});
+		_.each(d3.range(0,10),function(i) {
+			gv.collection.add({meta:{title:"A"+i, description: parseInt(Math.floor(Math.random() * 1000))+ "B"}});
 		},this);
 		$("#testbed").html(gv.render().el);
 		console.log(gv.collection.first().get('meta').description);
 		gv.collection.comparator = function(t) {
-			return t.get("meta").description;
+			return window.BWC.zeroPad(t.get("meta").description);
 		};
-		setTimeout(function()
-			{
-		gv.collection.sort();
-		console.log(gv.collection.first().get('meta').description);
-			},1400);
+		setTimeout(function() {
+		_.each(d3.range(10,100),function(i) {
+			gv.collection.add({meta:{title:"A"+i, description: parseInt(Math.floor(Math.random() * 1000))+ "B"}});
+		},this);
+    },1400);
+
+		setTimeout(function() {
+      gv.collection.sort();
+    },2800);
 	});
 });
