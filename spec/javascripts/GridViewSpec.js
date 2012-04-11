@@ -3,6 +3,7 @@ window.BWC = {
     options || (options = {});
     var length = options.length || 10;
     var zeros = "";
+    if (!value) value = "";
     for (var i = 0; i < length - (value.toString()).length; i++) zeros = zeros + "0";
     return zeros + value;
   }
@@ -111,11 +112,6 @@ describe("GridView", function() {
 		gv.collection.comparator = function(t) {
 			return window.BWC.zeroPad(t.get("meta").description);
 		};
-		setTimeout(function() {
-		_.each(d3.range(10,100),function(i) {
-			gv.collection.add({meta:{title:"A"+i, description: parseInt(Math.floor(Math.random() * 1000))+ "B"}});
-		},this);
-    },1400);
 
 		setTimeout(function() {
       gv.collection.sort();
