@@ -104,8 +104,30 @@ describe("GridView", function() {
 
 	it("should be able to sort against a particular facet",function() {
 			gv = new GridView();
-		_.each(d3.range(0,10),function(i) {
-			gv.collection.add({meta:{title:"A"+i, description: parseInt(Math.floor(Math.random() * 1000))+ "B"}});
+		gv.collection.comparator = function(t) {
+			return t.get("meta").title;
+		};
+
+    _.each(window.fixtures.sample_response.response.results, function(i){
+			gv.collection.add({meta:{title:i.sectionId,description:i.sectionName}});
+		},this);
+
+    gv.collection.sort();
+		$("#testbed").html(gv.render().el);
+		console.log(gv.collection.first().get('meta').description);
+		gv.collection.comparator = function(t) {
+			return window.BWC.zeroPad(t.get("meta").description);
+		};
+
+		setTimeout(function() {
+      gv.collection.sort();
+    },2800);
+	});
+  
+	it("should be able create a collection from Guardian data",function() {
+			gv = new GridView();
+    _.each(window.fixtures.sample_response.response.results, function(i){
+			gv.collection.add({meta:{title:i.sectionId}});
 		},this);
 		$("#testbed").html(gv.render().el);
 		console.log(gv.collection.first().get('meta').description);
