@@ -10,7 +10,7 @@ window.BWC = {
 
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','reorder', 'facetize','loadDataEasy');
+		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'facetize','loadDataEasy');
 		this.collection = new TileCollection();
 		this.w = 450;
 		this.h = 460;
@@ -23,6 +23,8 @@ window.GridView = Backbone.View.extend({
 		this.collection.bind('remove',this.removeTile);
 		this.collection.bind('reset',this.sortTiles);
 		this.render();
+
+		this.animationDuration = 1200;
 	},
 
 	rowsAndColumns: function(numberOfBuckets, maxBucketSize) {
@@ -43,14 +45,14 @@ window.GridView = Backbone.View.extend({
   },
 
 	addTile: function() {
-		this.loadData();
-		this.resizeCurrentTiles();
+		this.facetize(this.collection.facet);
 		this.createVis();
+   	this.animate();
 	},
 
 	sortTiles: function() {
 		this.loadData();
-		this.reorder();
+		this.animate();
 	},
 
 	removeTile: function(t) {
@@ -83,14 +85,6 @@ window.GridView = Backbone.View.extend({
 		this.loadData();
 
 		//TODO: move this out
-   	this.reorder();
- 		this.vis.selectAll("rect")
-      .data(this.data, function(d) {return d.cid})
-			.transition().duration(700)
-      .attr("height", function(d) { return d.h; } )
-      .attr("width", function(d) { return d.w; } )
-
-
 
 	},
 
@@ -115,7 +109,6 @@ window.GridView = Backbone.View.extend({
 				// split into the number of lists we have for buckets
 				var rc = this.rowsAndColumns(numBuckets,maxBucketSize.count);
 				
-			console.log(rc);
 
 			this.data = this.collection.map(function(t,iterator) {
 					var facet = t.get(this.collection.facet);
@@ -191,14 +184,20 @@ window.GridView = Backbone.View.extend({
      	.attr("height", this.h);
 		this.loadData();
 		this.createVis();
+		this.animate();
     return this;
 	},
 
-  reorder: function() {
-     return this.vis.selectAll(".tiles")
+  animate: function() {
+     this.vis.selectAll(".tiles")
       .data(this.data, function(d) {return d.cid})
-      .transition().duration(700)
+      .transition().duration(this.animationDuration)
         .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
+		 this.vis.selectAll("rect")
+      .data(this.data, function(d) {return d.cid})
+      .transition().duration(this.animationDuration)
+				.attr("height", function(d) { return d.h; } )
+				.attr("width", function(d) { return d.w; } );
   },
 
 	createVis: function(){
@@ -219,14 +218,14 @@ window.GridView = Backbone.View.extend({
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
 
+		/*
+
 		rects.append("text")
 			.text(function(d) { return d.model.cid; })
 			.attr("x", 4)
 			.attr("y", 25)
+			*/
 
-    rects.transition().duration(700)
-        .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-			
 		this.vis.selectAll(".tiles").data(this.data).exit().remove();
 
     var self = this;

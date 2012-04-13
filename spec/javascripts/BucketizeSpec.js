@@ -30,7 +30,14 @@ describe("Bucketize", function () {
 
 		setTimeout(function() {
 
+		_.each(d3.range(0,100), function(){
+				gv.collection.add({title:"bah", description:"forever alone"},{silent:true});
+		});
+
 			gv.facetize("description");
+			gv.createVis();
+			gv.animate();
+//			gv.collection.add({title:"bah", description:"forever alone"});
 		},1700);
 
 		expect(1).toEqual(1);
