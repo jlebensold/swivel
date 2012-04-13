@@ -16,15 +16,10 @@ describe("Adapter", function() {
 
   it('should be awesome', function() {
 
-    var translated = [];
+    var adapter = new Adapter({fields:fields, data:data});
 
-    _.each(data, function(item) {
-      var d = {}
-      _.each(fields, function(field) {
-        d[field[0]] = typeof(field[1]) == 'function' ? field[1](item) : item[field[1]];
-      });
-      translated.push(d);
-    });
+    var translated = adapter.transform();
+
 
     expect(translated[0].thumbnail).toEqual("http://static.guim.co.uk/sys-images/Media/Columnists/Columnists/2011/10/4/1317734975988/Apple-store-in-Beijing-003.jpg");
   });
