@@ -17,5 +17,9 @@ window.Adapter = Backbone.Model.extend({
     },this);
 
     return this.translated;
+  },
+
+  fasets: function(){
+    
   }
 });

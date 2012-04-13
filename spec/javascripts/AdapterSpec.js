@@ -17,7 +17,6 @@ describe("Adapter", function() {
   it('should be awesome', function() {
 
     var adapter = new Adapter({fields:fields, data:data});
-
     var translated = adapter.transform();
 
 
