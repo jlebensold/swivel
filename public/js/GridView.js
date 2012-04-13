@@ -22,6 +22,7 @@ window.GridView = Backbone.View.extend({
 		this.collection.bind('add',this.addTile);
 		this.collection.bind('remove',this.removeTile);
 		this.collection.bind('reset',this.sortTiles);
+    this.tileTemplate = this.options.tileTemplate;
 		this.render();
 
 		this.animationDuration = 1200;
@@ -219,13 +220,8 @@ window.GridView = Backbone.View.extend({
       .attr("width", function(d) { return d.w; } )
       .attr("fill", function(d) { return d.model.get("color") });
 
-		/*
 
-		rects.append("text")
-			.text(function(d) { return d.model.cid; })
-			.attr("x", 4)
-			.attr("y", 25)
-			*/
+    if (this.tileTemplate) this.tileTemplate(rects);
 
 		this.vis.selectAll(".tiles").data(this.data).exit().remove();
 
