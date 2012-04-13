@@ -23,7 +23,7 @@ describe("GridView", function() {
 			gv.collection.add({meta:{title:"A"+i}});
 		},this);
 
-		var r = gv.rowsAndColumns();
+		var r = gv.rowsAndColumns(1, gv.collection.length);
 		expect(r.rows).toEqual(3);
 		expect(r.columns).toEqual(4);
 		expect(r.tileSize).toEqual(30);

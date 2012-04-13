@@ -14,7 +14,8 @@ window.Tile.bind("remove", function() {
   this.destroy();
 });
 window.TileCollection = Backbone.Collection.extend({
-	model: Tile
+	model: Tile,
+	facet: '' 
 });
 window.TileCollection.comparator = function(t) {
   return t.get("meta").title;
