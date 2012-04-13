@@ -217,6 +217,7 @@ window.GridView = Backbone.View.extend({
       .attr("class", "rect")
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
+      .attr("fill", function(d) { return d.model.get("color") });
 
 		/*
 

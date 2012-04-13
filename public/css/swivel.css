@@ -8,9 +8,6 @@
   stroke-width: 1.5px;
 }
 .rect {
-	fill: white;
-	stroke: black;
-  shape-rendering: crispEdges;
 }
 .tile {
 	stroke: black;

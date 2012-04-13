@@ -7,22 +7,25 @@ describe("Bucketize", function () {
 	it ("should able to determin bucket offset", function() {
 		gv = new GridView();
 		gv.w = 1000
+
+    gv.collection.comparator = function(model) {
+      return model.get("title");
+    };
+
 		var facetsNames = ["description", "title"];
 
 
-		gv.collection.add({title: "The question", description:"Why?"});
-		gv.collection.add({title: "The question", description:"Why?"});
-		gv.collection.add({title: "The question", description:"Why?"});
-		gv.collection.add({title: "The question", description:"Why?"});
-		gv.collection.add({title: "What do do", description:"Some Great Stuff"});
-		gv.collection.add({title:"Awesome", description:"Why?"});
-		gv.collection.add({title:"Less So", description:"Some Great Stuff"});
-		gv.collection.add({title:"Less So", description:"Some Great Stuff"});
-		gv.collection.add({title:"Less So", description:"Some Great Stuff"});
-		gv.collection.add({title:"Less So", description:"Some Great Stuff"});
-		gv.collection.add({title:"bah", description:"forever alone"});
+    var colors = [
+      d3.rgb("chartreuse"),
+      d3.rgb("cornflowerblue"),
+      d3.rgb("darkgoldenrod")
+    ];
 
-
+    gv.collection.add({
+      title:"A Nice Title",
+      description:colors[1 % colors.length].toString(),
+      color: colors[1 % colors.length]
+    },{silent:true});
 
 		gv.facetize("title");
 
@@ -30,14 +33,34 @@ describe("Bucketize", function () {
 
 		setTimeout(function() {
 
-		_.each(d3.range(0,100), function(){
-				gv.collection.add({title:"bah", description:"forever alone"},{silent:true});
+		_.each(d3.range(0,50), function(i){
+      gv.collection.add({
+        title:"A Nice Title",
+        description:colors[i % colors.length].toString(),
+        color: colors[i % colors.length]
+      },{silent:true});
 		});
+
+		_.each(d3.range(0,50), function(i){
+      gv.collection.add({
+        title:"Some Title",
+        description:colors[i % colors.length].toString(),
+        color: colors[i % colors.length]
+      },{silent:true});
+		});
+
+		_.each(d3.range(0,50), function(i){
+      gv.collection.add({
+        title:"Sad title",
+        description:colors[i % colors.length].toString(),
+        color: colors[i % colors.length]
+      },{silent:true});
+		});
+
 
 			gv.facetize("description");
 			gv.createVis();
 			gv.animate();
-//			gv.collection.add({title:"bah", description:"forever alone"});
 		},1700);
 
 		expect(1).toEqual(1);
