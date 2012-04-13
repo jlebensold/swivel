@@ -33,13 +33,17 @@ window.Adapter = Backbone.Model.extend({
 				this.faceted[field[0]].push(item[field[0]]);
 			},this);
 		},this);
-		this.faceted = _.map(this.faceted,this.convertField,this);
+		this.faceted = _.compact(_.map(this.faceted,this.convertField,this));
 		
 		return this.faceted;
   },
 
 	convertField: function(values,fieldName) {
 		var type = this.fieldType(fieldName);
+
+		//support for identifying things that should not become facets
+		if (type == undefined) 
+			return null;
 		switch(type)
 		{
 			case 'string':
