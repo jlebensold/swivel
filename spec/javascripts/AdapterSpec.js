@@ -32,5 +32,6 @@ describe("Adapter", function() {
 		expect(faceted[3].values[0].toString()).toEqual('Sat Apr 07 2012 02:05:03 GMT+0300 (IDT)');
 		expect(faceted[3].values[0].getDay()).toEqual(6);
 		expect(faceted[4].values.length).toEqual(28);
+		console.log(JSON.stringify(faceted[4]));
 	});
 });
