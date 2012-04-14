@@ -1,4 +1,4 @@
-window.FacetStringView = Backbone.View.extend({
+window.FacetStringView = FacetBaseView.extend({
 	tagName: 'div',
 	className: 'accordion-group',
 	events: {
@@ -9,35 +9,23 @@ window.FacetStringView = Backbone.View.extend({
 	},
 	setFacetData: function(d) {
 		this.title = this.capitalizeFirstLetter(d.name);
-		this.elid = this.title.replace(' ','');
+		this.elId = this.title.replace(' ','');
 		this.values = d.values;
-	},
-
-	capitalizeFirstLetter: function(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+		this.facetvalue = this.values;
 	},
 
 	facetChanged: function() {
-		console.log(_.map($(this.el).find("input:checked"),function(e) { return $(e).val(); } ));
+		this.facetvalue = _.map($(this.el).find("input:checked"),function(e) { return $(e).val(); } );
+		this.trigger('facetChanged',this.facetvalue);
 	},
-
-	prepareAccordion: function() {
-		
-		$(this.el).empty();
-		$(this.el).append(
-					'<div class="accordion-heading">'+
-						'<a class="accordion-toggle" data-toggle="collapse" href="#'+this.elId+'" >'+this.title+'</a>'+
-					'</div>'+
-					'<div id="'+this.elId+'" class="accordion-body in" style="height: auto;">'+
-						'<ul class="unstyled"></ul>'+
-					'</div>');
-	},
-
 	render: function() {
 		this.prepareAccordion();
-	
+		$(this.el).find('.accordion-body').append('<ul class="unstyled"></ul>');
 		_.each(this.values,function(v) {
-			$(this.el).find('ul').append('<li><label class="checkbox"><input type="checkbox" value="'+v+'" ></input>'+v+'</label></li>');
+			var checked = (this.facetvalue.indexOf(v) != -1) ? 'checked="checked"' : '';
+			$(this.el).find('ul').append('<li>'+
+					'<label class="checkbox"><input type="checkbox" value="'+v+'" '+checked+'></input>'+v+'</label>'+
+				'</li>');
 		},this);
 		return this;
 	}

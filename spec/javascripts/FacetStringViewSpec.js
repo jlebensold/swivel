@@ -12,6 +12,12 @@ describe("FacetStringView",function() {
 	it("should render a list of checkboxes",function() {
 		view.setFacetData(data);
 		$("#testbed").html(view.render().el);
-		expect(1).toEqual(1);
+		expect($("#testbed ul li input").length).toEqual(data.values.length);
+	});
+
+	it("should have the facetvalue on load",function() {
+		view.setFacetData(data);
+		$("#testbed").html(view.render().el);
+		expect(view.facetvalue).toEqual(data.values);
 	});
 });
