@@ -1,4 +1,3 @@
-
 set :public_folder, File.dirname(__FILE__) + '/public'
 get '/test' do
 	erb :test

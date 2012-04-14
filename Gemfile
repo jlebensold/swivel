@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
-#gem 'less'
+gem 'less'
 gem 'sinatra'
 gem 'jasmine'
