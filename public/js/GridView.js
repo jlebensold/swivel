@@ -12,6 +12,11 @@ window.GridView = Backbone.View.extend({
 	initialize: function() {
 		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'facetize','loadDataEasy');
 		this.collection = new TileCollection();
+		if (this.options.collection != undefined) {
+			_.each(this.options.collection,function(t) {
+				this.collection.add(t);
+			},this);
+		}
 		this.w = 450;
 		this.h = 460;
 		this.x = d3.scale.linear().range([0, this.w]),
@@ -58,8 +63,7 @@ window.GridView = Backbone.View.extend({
 
 	removeTile: function(t) {
 		this.loadData();
-		this.resizeCurrentTiles();
-		this.createVis();
+		this.animate();
 	},
 
 	resizeCurrentTiles: function() {
@@ -195,6 +199,11 @@ window.GridView = Backbone.View.extend({
       .transition().duration(this.animationDuration)
         .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
 		 this.vis.selectAll("rect")
+      .data(this.data, function(d) {return d.cid})
+      .transition().duration(this.animationDuration)
+				.attr("height", function(d) { return d.h; } )
+				.attr("width", function(d) { return d.w; } );
+			this.vis.selectAll("image")
       .data(this.data, function(d) {return d.cid})
       .transition().duration(this.animationDuration)
 				.attr("height", function(d) { return d.h; } )

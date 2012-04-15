@@ -7,8 +7,8 @@ window.FacetNumberrangeView = FacetBaseView.extend({
 	setFacetData: function(d) {
 		this.title = this.capitalizeFirstLetter(d.name);
 		this.elId = this.title.replace(' ','');
-		this.values = d.values;
-		this.facetvalue = this.values;
+		this.defaultValues = d.values;
+		this.facetvalue = this.defaultValues;
 	},
 
 	roundNumber: function(num, dec) {
@@ -19,22 +19,22 @@ window.FacetNumberrangeView = FacetBaseView.extend({
 		this.prepareAccordion();
 		
 	$(this.el).find('.accordion-body').append('<div style="height:60px;margin: 20px;">'+
-				'<div style="float:left;margin: 0 10px;">'+this.roundNumber(this.values[0],2)+'</div>'+
+				'<div style="float:left;margin: 0 10px;">'+this.roundNumber(this.facetvalue[0],2)+'</div>'+
 					'<div class="slider" style="float:left;width: 60%;"></div>'+
-				'<div style="float:left;margin:0 10px;">'+this.roundNumber(this.values[1],2)+
-					'</div><div style="margin: 0 0;margin-top:-10px;"><input type="text" class="input-medium" id="'+this.elId+'_value" value="'+this.values[0] + " - " + this.values[1]+'"></input>'+
+				'<div style="float:left;margin:0 10px;">'+this.roundNumber(this.facetvalue[1],2)+
+					'</div><div style="margin: 0 0;margin-top:-10px;"><input type="text" class="input-medium" id="'+this.elId+'_value" value="'+this.facetvalue[0] + " - " + this.facetvalue[1]+'"></input>'+
 				'</div>');	
 	var self = this;
 	$(this.el).find('.slider').slider({
 			range: true,
-			min: this.values[0],
-			max: this.values[1],
-			step: (this.values[1] - this.values[0]) / 100,
-			values: [ this.values[0], this.values[1] ],
-			slide: function( event, ui ) {
+			min: this.defaultValues[0],
+			max: this.defaultValues[1],
+			step: (this.defaultValues[1] - this.defaultValues[0]) / 100,
+			values: [ this.defaultValues[0], this.defaultValues[1] ],
+			stop: function( event, ui ) {
 					$( "#"+self.elId+"_value" ).val(ui.values[0] + " - " + ui.values[1]);
 					self.facetvalue = [ui.values[0], ui.values[1]];
-					self.trigger('facetChanged',self.facetvalue);
+					self.trigger('facetChanged',self.facetvalue,self);
 			}
 		});
 		

@@ -16,7 +16,7 @@ window.FacetStringView = FacetBaseView.extend({
 
 	facetChanged: function() {
 		this.facetvalue = _.map($(this.el).find("input:checked"),function(e) { return $(e).val(); } );
-		this.trigger('facetChanged',this.facetvalue);
+		this.trigger('facetChanged',this.facetvalue,this);
 	},
 	render: function() {
 		this.prepareAccordion();
