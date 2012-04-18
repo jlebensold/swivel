@@ -1,8 +1,9 @@
 window.FacetDaterangeView = FacetBaseView.extend({
 	tagName: 'div',
+	type: 'daterange',
 	className: 'accordion-group',
 	initialize: function() {
-		_.bindAll(this,'render','setFacetData','prepareAccordion');
+		_.bindAll(this,'render','setFacetData','prepareAccordion','contains');
 	},
 	setFacetData: function(d) {
 		this.title = this.capitalizeFirstLetter(d.name);
@@ -38,6 +39,14 @@ window.FacetDaterangeView = FacetBaseView.extend({
 			self.trigger('facetChanged',self.facetvalue,self);
 		});	
 		return this;
+	},
+
+	contains: function(val) {
+		console.log(val);
+		var d = new Date(val).getTime();
+
+		return d < new Date(this.facetvalue[1]).getTime() && 
+					 d > new Date(this.facetvalue[0]).getTime();
 	}
 
 

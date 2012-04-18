@@ -1,11 +1,12 @@
 window.FacetStringView = FacetBaseView.extend({
 	tagName: 'div',
+	type: 'string',
 	className: 'accordion-group',
 	events: {
 		"change input": "facetChanged"
 	},
 	initialize: function() {
-		_.bindAll(this,'render','setFacetData','prepareAccordion','facetChanged');
+		_.bindAll(this,'render','setFacetData','prepareAccordion','facetChanged','contains');
 	},
 	setFacetData: function(d) {
 		this.title = this.capitalizeFirstLetter(d.name);
@@ -28,6 +29,9 @@ window.FacetStringView = FacetBaseView.extend({
 				'</li>');
 		},this);
 		return this;
+	},
+	contains: function(val) {
+		return (_.intersection(this.facetvalue,val).length > 0 || _.include(this.facetvalue,val));
 	}
 
 });

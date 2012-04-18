@@ -40,9 +40,11 @@ window.SwivelView = Backbone.View.extend({
 	},
 	//TODO
 	facetChanged: function(e,v) {
-		console.log(e,v);
-		this.gv.collection.remove(this.gv.collection.last());
-	
+
+		this.gv.collection.facetfilter(v,e);
+		this.gv.addTile();	
+		this.gv.removeTile();
+		this.gv.animate();
 	},
 	//TODO
 	facetize: function(facet) {

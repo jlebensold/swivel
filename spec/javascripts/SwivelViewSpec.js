@@ -10,7 +10,7 @@ describe("SwivelView",function() {
       ['thumbnail', function(item) {return item.fields.thumbnail;}],
       ['shortUrl', function(item) { return item.fields.shortUrl;}],
       ['score', function(item) { return item.fields.score; }, 'numberrange'],
-      ['webPublicationDate', 'webPublicationDate','daterange'],
+      ['webpublicationdate', 'webPublicationDate','daterange'],
       ['webTitle','webTitle'],
       ['tags',function(item) { return _.compact(_.uniq(_.map(item.tags,function(t) { return t.sectionName;})))},'collection']
     ];

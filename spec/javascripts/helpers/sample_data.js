@@ -6111,7 +6111,12 @@ window.fixtures.sample_response = {
             "sectionName": "From the Guardian"
           }
         ]
-      }
-    ]
+      },
+			
+    
+		
+		
+		
+		]
   }
 }

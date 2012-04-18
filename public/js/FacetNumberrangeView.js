@@ -1,8 +1,9 @@
 window.FacetNumberrangeView = FacetBaseView.extend({
 	tagName: 'div',
+	type: 'numberrange',
 	className: 'accordion-group',
 	initialize: function() {
-		_.bindAll(this,'render','setFacetData','prepareAccordion');
+		_.bindAll(this,'render','setFacetData','prepareAccordion','contains');
 	},
 	setFacetData: function(d) {
 		this.title = this.capitalizeFirstLetter(d.name);
@@ -39,6 +40,10 @@ window.FacetNumberrangeView = FacetBaseView.extend({
 		});
 		
 		return this;
+	},
+
+	contains: function(val) { 
+		return val < this.facetvalue[1] && val > this.facetvalue[0];
 	}
 
 });

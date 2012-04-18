@@ -11,7 +11,7 @@ describe("Bucketize", function () {
     gv.collection.add({ title:"Sad title", description:"This is a description" },{silent:true});
     gv.collection.add({ title:"Happy title", description:"a different description" },{silent:true});
 
-    gv.facetize("title");
+    gv.bucketize("title");
 
     expect(Object.keys(gv.buckets).length).toEqual(2);
 

@@ -105,7 +105,7 @@ describe("GridView", function() {
 			$("#testbed").append("<div><pre>"+ JSON.stringify(d.toJSON())+"</pre></div>");
 		});
 		gv.trigger('tileClick',gv.collection.first());
-		expect($("#testbed pre").html()).toEqual('{"meta":{"title":"A0"},"template":""}');
+		expect($("#testbed pre").html()).toEqual('{"meta":{"title":"A0"},"active":true,"template":""}');
 
 	});
 
@@ -121,7 +121,7 @@ describe("GridView", function() {
 
     gv.collection.sort();
 		$("#testbed").html(gv.render().el);
-		console.log(gv.collection.first().get('meta').description);
+		//console.log(gv.collection.first().get('meta').description);
 		gv.collection.comparator = function(t) {
 			return window.BWC.zeroPad(t.get("meta").description);
 		};
@@ -137,7 +137,7 @@ describe("GridView", function() {
 			gv.collection.add({meta:{title:i.sectionId}});
 		},this);
 		$("#testbed").html(gv.render().el);
-		console.log(gv.collection.first().get('meta').description);
+		//console.log(gv.collection.first().get('meta').description);
 		gv.collection.comparator = function(t) {
 			return window.BWC.zeroPad(t.get("meta").description);
 		};

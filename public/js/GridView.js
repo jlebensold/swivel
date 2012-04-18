@@ -10,7 +10,7 @@ window.BWC = {
 
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'facetize','loadDataEasy');
+		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'bucketize','loadDataEasy');
 		this.collection = new TileCollection();
 		if (this.options.collection != undefined) {
 			_.each(this.options.collection,function(t) {
@@ -25,7 +25,6 @@ window.GridView = Backbone.View.extend({
 		this.data = [];
    	this.margin = 0.7;
 		this.collection.bind('add',this.addTile);
-		this.collection.bind('remove',this.removeTile);
 		this.collection.bind('reset',this.sortTiles);
     this.tileTemplate = this.options.tileTemplate;
 		this.render();
@@ -51,7 +50,7 @@ window.GridView = Backbone.View.extend({
   },
 
 	addTile: function() {
-		this.facetize(this.collection.facet);
+		this.bucketize(this.collection.bucketing);
 		this.createVis();
    	this.animate();
 	},
@@ -61,8 +60,19 @@ window.GridView = Backbone.View.extend({
 		this.animate();
 	},
 
-	removeTile: function(t) {
+	removeTile: function() {
 		this.loadData();
+
+//		this.vis.selectAll(".tiles")
+//				.data(this.data, function(d) {return d.cid})
+//				.transition().duration(600)
+//        .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
+
+
+		this.vis.selectAll(".tiles").data(this.data).exit()
+			.transition().duration(500)
+			.attr("transform",function(d) {return "translate("+((0.5 - Math.random())*10000)+","+((0.5 - Math.random())*10000)+")"})
+			.remove();
 		this.animate();
 	},
 
@@ -70,21 +80,22 @@ window.GridView = Backbone.View.extend({
     this.vis.selectAll(".tiles")
         .data(this.data, function(d) {return d.cid})
         .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-
+/*
     this.vis.selectAll("rect")
       .data(this.data, function(d) {return d.cid})
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
+			*/
 	},
 
-	facetize: function(facet) {
-		this.collection.facet = facet;
+	bucketize: function(bucketing) {
+		this.collection.bucketing = bucketing;
 		this.buckets = this.collection.reduce(function(memo, item) {
-			memo[item.get(facet)] = memo[item.get(facet)] || { 
+			memo[item.get(bucketing)] = memo[item.get(bucketing)] || { 
 				position:Object.keys(memo).length, 
 				count: 0
 			}
-			memo[item.get(facet)].count += 1;
+			memo[item.get(bucketing)].count += 1;
 			return memo;
 		}, {},this);
 		this.loadData();
@@ -94,7 +105,7 @@ window.GridView = Backbone.View.extend({
 	},
 
 	loadData: function() {
-			if (this.collection.facet.length == 0) {
+			if (this.collection.bucketing.length == 0) {
 				this.loadDataEasy();
 			}
 			else	{
@@ -116,48 +127,53 @@ window.GridView = Backbone.View.extend({
 				
 
 			this.data = this.collection.map(function(t,iterator) {
-					var facet = t.get(this.collection.facet);
-					var perBucketIterator = this.buckets[facet].iterator++;
+					if(!t.get('active'))
+						return null;
+					var bucketing = t.get(this.collection.bucketing);
+					var perBucketIterator = this.buckets[bucketing].iterator++;
 
 					var col = perBucketIterator % rc.columns;
 					if (rc.columns == 0)
 					{
-						this.buckets[facet].lastCol = 1;
+						this.buckets[bucketing].lastCol = 1;
 						col = 0
 					}
 					//single column edge case
 					if (rc.columns == 1 )
 					{
-						this.buckets[facet].row = perBucketIterator; 
+						this.buckets[bucketing].row = perBucketIterator; 
 					}
-					else if (this.buckets[facet].lastCol > col)
+					else if (this.buckets[bucketing].lastCol > col)
 					{
-						this.buckets[facet].row++;
+						this.buckets[bucketing].row++;
 					}
-					this.buckets[facet].lastCol = col;
-					var offset = this.buckets[facet].position * rc.width;
+					this.buckets[bucketing].lastCol = col;
+					var offset = this.buckets[bucketing].position * rc.width;
 					return { 
 									 h: rc.tileSize, 
 									 w: rc.tileSize, 
 									 x: offset + (col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4)))), 
-									 y: (this.buckets[facet].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
-									 row: this.buckets[facet].row,
+									 y: (this.buckets[bucketing].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
+									 row: this.buckets[bucketing].row,
 									 col: col,
 									 model: t,
 									 cid: t.cid
 								 };
 
 			},this);
+			this.data = _.compact(this.data);
 
 			}
 
 	},
 
 	loadDataEasy: function() {
-			var rc = this.rowsAndColumns(1, this.collection.length);
+			var rc = this.rowsAndColumns(1, this.collection.where({active:true}).length);
 			var row = 0;
 			var lastCol = 0;
 			this.data = this.collection.map(function(t,iterator) { 
+					if(!t.get('active'))			
+							return null;      				
 					var col = iterator % rc.columns;
 					if (lastCol > col)
 						row++;
@@ -174,6 +190,7 @@ window.GridView = Backbone.View.extend({
 								 };
 
 			},this);
+			this.data = _.compact(this.data);
 	},
 
 	render: function() {
@@ -232,7 +249,7 @@ window.GridView = Backbone.View.extend({
 
     if (this.tileTemplate) this.tileTemplate(rects);
 
-		this.vis.selectAll(".tiles").data(this.data).exit().remove();
+//		this.vis.selectAll(".tiles").data(this.data).exit().remove();
 
     var self = this;
     this.vis.selectAll("rect").on("click",function(d) {
