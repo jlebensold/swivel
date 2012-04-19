@@ -126,9 +126,7 @@ window.GridView = Backbone.View.extend({
 				var rc = this.rowsAndColumns(numBuckets,maxBucketSize.count);
 				
 
-			this.data = this.collection.map(function(t,iterator) {
-					if(!t.get('active'))
-						return null;
+			this.data = this.collection.active().map(function(t,iterator) {
 					var bucketing = t.get(this.collection.bucketing);
 					var perBucketIterator = this.buckets[bucketing].iterator++;
 
@@ -161,19 +159,16 @@ window.GridView = Backbone.View.extend({
 								 };
 
 			},this);
-			this.data = _.compact(this.data);
 
 			}
 
 	},
 
 	loadDataEasy: function() {
-			var rc = this.rowsAndColumns(1, this.collection.where({active:true}).length);
+			var rc = this.rowsAndColumns(1, this.collection.active().length);
 			var row = 0;
 			var lastCol = 0;
-			this.data = this.collection.map(function(t,iterator) { 
-					if(!t.get('active'))			
-							return null;      				
+			this.data = this.collection.active().map(function(t,iterator) { 
 					var col = iterator % rc.columns;
 					if (lastCol > col)
 						row++;
@@ -190,7 +185,6 @@ window.GridView = Backbone.View.extend({
 								 };
 
 			},this);
-			this.data = _.compact(this.data);
 	},
 
 	render: function() {

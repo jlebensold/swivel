@@ -18,6 +18,11 @@ window.TileCollection = Backbone.Collection.extend({
 	model: Tile,
 	bucketing: '',
 	activeFacets: {},
+  
+  active: function() {
+    return new TileCollection(this.where({active:true}));
+  },
+
 	facetfilter: function(facetview,range) {
 		
 		this.each(function(t) {t.set('active',true);},this);

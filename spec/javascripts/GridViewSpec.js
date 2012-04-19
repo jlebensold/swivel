@@ -146,4 +146,41 @@ describe("GridView", function() {
       gv.collection.sort();
     },2800);
 	});
+
+  it("Should Pulsate", function(){
+    var data = [ {x: 10, y:10, h:100, w:100} ];
+
+		$("#testbed").html("<svg width='300' height='300'></svg>");
+    var vis = d3.select("#testbed svg");
+    var rects = vis.append("rect")
+        .data(data)
+        .attr("x", function(d) { return d.x; } )
+        .attr("y", function(d) { return d.y; } )
+        .attr("height", function(d) { return d.h; } )
+        .attr("width", function(d) { return d.w; } )
+        .attr("fill", "black");
+
+
+
+
+    setInterval(function(){
+      if (data[0].h == 200) {
+        data[0].h = 100;
+        data[0].w = 100;
+      }
+      else {
+        data[0].h = 200;
+        data[0].w = 200;
+      }
+
+      vis.selectAll("rect")
+        .data(data)
+          .transition().duration(750)
+          .attr("height", function(d) { return d.h; } )
+          .attr("width", function(d) { return d.w; } );
+    }, 2000);
+    
+  
+		
+  });
 });

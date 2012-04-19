@@ -24,5 +24,17 @@ describe("SwivelView",function() {
 		$("#testbed").html(swivel.render().el);
 	});
 
+	it("should render with small guardian data",function() {
+		window.swivel = new SwivelView({adapter:{data:[
+        data[0],
+        data[1],
+        data[2],
+        data[3],
+        data[4],
+        data[5],
+      ],fields:fields}});
+		$("#testbed").html(swivel.render().el);
+	});
+
 
 });
