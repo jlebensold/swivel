@@ -1,7 +1,7 @@
 window.SwivelView = Backbone.View.extend({
 	tagName: 'div',
 	initialize: function() {
-		_.bindAll(this,'render','prepareFacets','facetChanged','facetize');
+		_.bindAll(this,'render','prepareFacets','facetChanged','updateBucketing');
 		this.adapter = new Adapter(this.options.adapter);
 
 		var template = function(rects) {
@@ -11,10 +11,21 @@ window.SwivelView = Backbone.View.extend({
 				.attr('height',function(d) { return d.h; });
 			}
 		this.prepareFacets();
+		
 		this.gv = new GridView({collection:this.adapter.transform(), tileTemplate:template});
 		this.gv.w = 1000;
+
+		this.toolbar = new ToolbarView({bucketable: this.options.bucketable });
+		this.toolbar.bind('bucketChange',this.updateBucketing);
 	},
+	
+	updateBucketing: function(val) {
+		this.gv.bucketize(val);
+		this.gv.animate();
+	},
+
 	prepareFacets: function() {
+
 	this.facetviews = _.map(this.adapter.facets(),function(f) { 
 			var facetview; 
 			switch(f.type) {
@@ -46,14 +57,10 @@ window.SwivelView = Backbone.View.extend({
 		this.gv.removeTile();
 		this.gv.animate();
 	},
-	//TODO
-	facetize: function(facet) {
-		this.gv.facetize(facet);
-		this.gv.animate();
-	},
 
 	render: function() {
 		$(this.el).append(
+				'<div class="toolbar row"></div>'+
 				'<div class="row">'+
 					'<div class="span3 leftpanel"></div>'+
 					'<div class="mainpanel"></div>'+
@@ -64,6 +71,7 @@ window.SwivelView = Backbone.View.extend({
 			$(this.el).find('.leftpanel').append(fv.render().el);
 		},this);
 		$(this.el).find('.mainpanel').append(this.gv.render().el);
+		$(this.el).find('.toolbar').append(this.toolbar.render().el);
 		return this;
 	}
 

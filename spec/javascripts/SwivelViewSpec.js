@@ -20,8 +20,9 @@ describe("SwivelView",function() {
 	});
 
 	it("should render with guardian data",function() {
-		window.swivel = new SwivelView({adapter:{data:data,fields:fields}});
+		window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["score","tags","webpublicationdate"]});
 		$("#testbed").html(swivel.render().el);
+		expect($("#testbed svg image").length).toEqual(150);
 	});
 
 	it("should render with small guardian data",function() {
@@ -32,13 +33,13 @@ describe("SwivelView",function() {
         data[3],
         data[4],
         data[5],
-      ],fields:fields}});
+      ],fields:fields},bucketable:["score","tags","webpublicationdate"]});
 
 		$("#testbed").html(swivel.render().el);
 		setTimeout(function() {
 			swivel.gv.collection.first().set('active',false);
 			swivel.gv.removeTile();
-
+			expect($("#testbed svg image").length).toEqual(5);
 		},2000);
 	});
 
