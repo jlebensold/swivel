@@ -64,12 +64,6 @@ window.GridView = Backbone.View.extend({
 	removeTile: function() {
 		this.loadData();
 
-//		this.vis.selectAll(".tiles")
-//				.data(this.data, function(d) {return d.cid})
-//				.transition().duration(600)
-//        .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-		console.log(this.data);
-
 		this.vis.selectAll(".tiles").data(this.data).exit()
 			.transition().duration(500)
 			.attr("transform",function(d) {return "translate("+((0.5 - Math.random())*10000)+","+((0.5 - Math.random())*10000)+")"})
@@ -81,12 +75,6 @@ window.GridView = Backbone.View.extend({
     this.vis.selectAll(".tiles")
         .data(this.data, function(d) {return d.cid})
         .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-/*
-    this.vis.selectAll("rect")
-      .data(this.data, function(d) {return d.cid})
-      .attr("height", function(d) { return d.h; } )
-      .attr("width", function(d) { return d.w; } )
-			*/
 	},
 
 	bucketize: function(bucketing) {

@@ -12,7 +12,16 @@ describe("FacetDaterangeView",function() {
 	it("should render a date range",function() {
 		view.setFacetData(data);
 		$("#testbed").html(view.render().el);
-		expect(new Date(view.facetvalue[0]).getDay()).toEqual(5);
+		expect(new Date(view.facetvalue[0]).format('dd')).toEqual('06');
+	});
+
+	it("should correctly compare dates",function() {
+		d = new Date('April 8, 2012');
+
+		view.setFacetData(data);
+		$("#testbed").html(view.render().el);
+		expect(new Date(view.facetvalue[0]).format('dd')).toEqual('06');
+		expect(view.contains(d)).toBeTruthy();
 	});
 });
 
