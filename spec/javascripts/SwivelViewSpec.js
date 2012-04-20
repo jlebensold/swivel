@@ -5,7 +5,7 @@ describe("SwivelView",function() {
 		$("#testbed").remove();
 		$("body").append("<div id='testbed'></div>");
 
-  data = fixtures.sample_response.response.results;
+  data = fixtures.sample_response_large.response.results;
   fields = [
       ['thumbnail', function(item) {return item.fields.thumbnail;}],
       ['shortUrl', function(item) { return item.fields.shortUrl;}],
@@ -33,7 +33,13 @@ describe("SwivelView",function() {
         data[4],
         data[5],
       ],fields:fields}});
+
 		$("#testbed").html(swivel.render().el);
+		setTimeout(function() {
+			swivel.gv.collection.first().set('active',false);
+			swivel.gv.removeTile();
+
+		},2000);
 	});
 
 

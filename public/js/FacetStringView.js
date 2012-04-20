@@ -31,7 +31,7 @@ window.FacetStringView = FacetBaseView.extend({
 		return this;
 	},
 	contains: function(val) {
-		return (_.intersection(this.facetvalue,val).length > 0 || _.include(this.facetvalue,val));
+		return _.intersection(this.facetvalue,val).length > 0;// || _.include(this.facetvalue,val));
 	}
 
 });

@@ -27,6 +27,7 @@ window.GridView = Backbone.View.extend({
 		this.collection.bind('add',this.addTile);
 		this.collection.bind('reset',this.sortTiles);
     this.tileTemplate = this.options.tileTemplate;
+		this.tileSize = 0;
 		this.render();
 
 		this.animationDuration = 1200;
@@ -38,13 +39,13 @@ window.GridView = Backbone.View.extend({
         var p = zoom * (maxBucketSize - Math.pow(margin, 2));
         var q = (this.h + ((this.w / numberOfBuckets) * zoom)) * margin;
         var r = -1 * (this.h * (this.w / numberOfBuckets));
-
-        var tileSize = ((-1 * q) + Math.sqrt(Math.pow(q, 2) - (4 * p * r))) / (2 * p);
+				
+        this.tileSize = ((-1 * q) + Math.sqrt(Math.pow(q, 2) - (4 * p * r))) / (2 * p);
 				//TODO this is too conservative
         return {
-            rows:  Math.floor(this.h / tileSize * zoom),
-            columns:  Math.floor((this.w / numberOfBuckets) / tileSize),
-            tileSize: Math.floor(tileSize),
+            rows:  Math.floor(this.h / this.tileSize * zoom),
+            columns:  Math.floor((this.w / numberOfBuckets) / this.tileSize),
+            tileSize: Math.floor(this.tileSize),
 						width: (this.w / numberOfBuckets)
         }
   },
@@ -67,7 +68,7 @@ window.GridView = Backbone.View.extend({
 //				.data(this.data, function(d) {return d.cid})
 //				.transition().duration(600)
 //        .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-
+		console.log(this.data);
 
 		this.vis.selectAll(".tiles").data(this.data).exit()
 			.transition().duration(500)
@@ -205,20 +206,22 @@ window.GridView = Backbone.View.extend({
 	},
 
   animate: function() {
-     this.vis.selectAll(".tiles")
+
+     var animation = this.vis.selectAll(".tiles")
       .data(this.data, function(d) {return d.cid})
-      .transition().duration(this.animationDuration)
-        .attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
-		 this.vis.selectAll("rect")
-      .data(this.data, function(d) {return d.cid})
-      .transition().duration(this.animationDuration)
-				.attr("height", function(d) { return d.h; } )
-				.attr("width", function(d) { return d.w; } );
-			this.vis.selectAll("image")
-      .data(this.data, function(d) {return d.cid})
-      .transition().duration(this.animationDuration)
-				.attr("height", function(d) { return d.h; } )
-				.attr("width", function(d) { return d.w; } );
+		  .transition().duration(this.animationDuration);
+
+		 animation.attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
+
+		 //TODO: figure out why tileSize needs to be globally referenced and why data() doesn't work
+		 var self = this;
+		 animation.selectAll(".tiles rect")
+				.attr("height", function(d) { return self.tileSize; } )
+				.attr("width", function(d) { return self.tileSize; } );
+
+		 animation.selectAll(".tiles image")
+				.attr("height", function(d) { return self.tileSize; } )
+				.attr("width", function(d) { return self.tileSize; } );
   },
 
 	createVis: function(){
@@ -227,6 +230,7 @@ window.GridView = Backbone.View.extend({
       .data(this.data, function(d) {return d.cid})
    		.enter()
       .append("g")
+			.attr("id",function(d) { return d.cid })
       .attr("class","tiles")
       .attr("transform",function(d) {
         var x = (0.5 - Math.random())*10000;
@@ -238,7 +242,7 @@ window.GridView = Backbone.View.extend({
       .attr("class", "rect")
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
-      .attr("fill", function(d) { return d.model.get("color") });
+      .attr("fill", function(d) { return 'black'; });
 
 
     if (this.tileTemplate) this.tileTemplate(rects);

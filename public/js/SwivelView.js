@@ -12,7 +12,7 @@ window.SwivelView = Backbone.View.extend({
 			}
 		this.prepareFacets();
 		this.gv = new GridView({collection:this.adapter.transform(), tileTemplate:template});
-		this.gv.w = 1100;
+		this.gv.w = 1000;
 	},
 	prepareFacets: function() {
 	this.facetviews = _.map(this.adapter.facets(),function(f) { 
