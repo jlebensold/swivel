@@ -9,6 +9,7 @@ describe("SwivelView",function() {
   fields = [
       ['thumbnail', function(item) {return item.fields.thumbnail;}],
       ['shortUrl', function(item) { return item.fields.shortUrl;}],
+      ['sectionname', function(item) { return item.sectionName;},'collection'],
       ['score', function(item) { return item.fields.score; }, 'numberrange'],
       ['webpublicationdate', 'webPublicationDate','daterange'],
       ['webTitle','webTitle'],
@@ -20,7 +21,7 @@ describe("SwivelView",function() {
 	});
 
 	it("should render with guardian data",function() {
-		window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["score","tags","webpublicationdate"]});
+		window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["score","tags","webpublicationdate",'sectionname']});
 		$("#testbed").html(swivel.render().el);
 		expect($("#testbed svg image").length).toEqual(150);
 	});
