@@ -53,22 +53,14 @@ window.GridView = Backbone.View.extend({
 	addTile: function() {
 		this.bucketize(this.collection.bucketing);
 		this.createVis();
-   	this.animate();
 	},
 
 	sortTiles: function() {
 		this.loadData();
-		this.animate();
 	},
 
 	removeTile: function() {
 		this.loadData();
-
-		this.vis.selectAll(".tiles").data(this.data).exit()
-			.transition().duration(500)
-			.attr("transform",function(d) {return "translate("+((0.5 - Math.random())*10000)+","+((0.5 - Math.random())*10000)+")"})
-			.remove();
-		this.animate();
 	},
 
 	resizeCurrentTiles: function() {
@@ -201,15 +193,14 @@ window.GridView = Backbone.View.extend({
 
 		 animation.attr("transform",function(d) {return "translate("+(d.x+d.h)+","+(d.y+d.w)+")scale(-1,-1)";});
 
-		 //TODO: figure out why tileSize needs to be globally referenced and why data() doesn't work
-		 var self = this;
-		 animation.selectAll(".tiles rect")
-				.attr("height", function(d) { return self.tileSize; } )
-				.attr("width", function(d) { return self.tileSize; } );
+		 this.vis.selectAll("rect")
+      .data(this.data, function(d) {return d.cid})
+				.attr("height", function(d) { console.log(d.cid, d.h);return d.h; } )
+				.attr("width", function(d) { return d.w; } );
 
-		 animation.selectAll(".tiles image")
-				.attr("height", function(d) { return self.tileSize; } )
-				.attr("width", function(d) { return self.tileSize; } );
+		 animation.selectAll("image")
+				.attr("height", function(d) { return d.h; } )
+				.attr("width", function(d) { return d.w; } );
   },
 
 	createVis: function(){
@@ -218,7 +209,6 @@ window.GridView = Backbone.View.extend({
       .data(this.data, function(d) {return d.cid})
    		.enter()
       .append("g")
-			.attr("id",function(d) { return d.cid })
       .attr("class","tiles")
       .attr("transform",function(d) {
         var x = (0.5 - Math.random())*10000;
@@ -228,6 +218,7 @@ window.GridView = Backbone.View.extend({
 	
     rects.append("rect")
       .attr("class", "rect")
+			.attr("id",function(d) { return d.cid })
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
       .attr("fill", function(d) { return 'black'; });
@@ -235,11 +226,10 @@ window.GridView = Backbone.View.extend({
 
     if (this.tileTemplate) this.tileTemplate(rects);
 
-//		this.vis.selectAll(".tiles").data(this.data).exit().remove();
+		this.vis.selectAll(".tiles").data(this.data, function(d) { return d.cid;}).exit().remove();
 
     var self = this;
     this.vis.selectAll("rect").on("click",function(d) {
-      self.tileClicked(d.model);
     });
 	},
 
