@@ -1,7 +1,6 @@
 window.ToolbarView = Backbone.View.extend({
 	className: 'row',
 	events: {
-
 		'click .btn': 'modeClicked',
 		'change select': 'bucketizeChanged'
 	},
@@ -27,9 +26,9 @@ window.ToolbarView = Backbone.View.extend({
 
 	modeClicked: function(e) {
 		e.preventDefault();
-		$(this.el).find(".btn").removeClass('active');
-		$(e.target).addClass('active');
-		if($(e.target).hasClass('bucketize')) {
+		$(this.el).find("a.btn").removeClass('active');
+		$(e.currentTarget).addClass('active');
+		if($(e.currentTarget).hasClass('bucketize')) {
 			$(this.el).find(".bucketable select").removeAttr("disabled");
 		} else {
 			$(this.el).find(".bucketable select").attr("disabled","disabled");
@@ -43,7 +42,11 @@ window.ToolbarView = Backbone.View.extend({
 	},
 	
 	tpl: function() {
-		return '<div class="pull-right btn-toolbar">'+
+		return 
+			'<div class="pull-right btn-toolbar">'+
+
+			'</div>'+
+			'<div class="pull-right btn-toolbar">'+
 				'<div class="btn-group">'+
 					'<a href="#" class="btn active grid"><i class="icon-th">&nbsp;</i></a>'+
 					'<a href="#" class="btn bucketize"><i class="icon-signal">&nbsp;</i></a>'+
