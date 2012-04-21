@@ -198,9 +198,18 @@ window.GridView = Backbone.View.extend({
 				.attr("height", function(d) { console.log(d.cid, d.h);return d.h; } )
 				.attr("width", function(d) { return d.w; } );
 
-		 animation.selectAll("image")
+		 this.vis.selectAll("image")
+      .data(this.data, function(d) {return d.cid})
 				.attr("height", function(d) { return d.h; } )
 				.attr("width", function(d) { return d.w; } );
+
+		this.vis.selectAll(".tiles").data(this.data, function(d) { return d.cid;}).exit()
+		  .transition().duration(this.animationDuration)
+      .attr("transform",function(d) {
+        var x = (0.5 - Math.random())*10000;
+        var y =  (0.5 - Math.random())*10000;
+        return "translate("+x+","+y+")"})
+      .remove();
   },
 
 	createVis: function(){
@@ -226,7 +235,6 @@ window.GridView = Backbone.View.extend({
 
     if (this.tileTemplate) this.tileTemplate(rects);
 
-		this.vis.selectAll(".tiles").data(this.data, function(d) { return d.cid;}).exit().remove();
 
     var self = this;
     this.vis.selectAll("rect").on("click",function(d) {
