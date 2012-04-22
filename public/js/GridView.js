@@ -71,7 +71,7 @@ window.GridView = Backbone.View.extend({
 
 	bucketize: function(bucketing) {
 		this.collection.bucketing = bucketing;
-		this.buckets = this.collection.reduce(function(memo, item) {
+		this.buckets = this.collection.active().reduce(function(memo, item) {
 			memo[item.get(bucketing)] = memo[item.get(bucketing)] || { 
 				position:Object.keys(memo).length, 
 				count: 0
@@ -223,9 +223,7 @@ window.GridView = Backbone.View.extend({
         var x = (0.5 - Math.random())*10000;
         var y =  (0.5 - Math.random())*10000;
         return "translate("+x+","+y+")";
-      });
-	
-    rects.append("rect")
+      }).append("rect")
       .attr("class", "rect")
 			.attr("id",function(d) { return d.cid })
       .attr("height", function(d) { return d.h; } )
