@@ -42,9 +42,7 @@ window.ToolbarView = Backbone.View.extend({
 	},
 	
 	tpl: function() {
-		return 
-			'<div class="pull-right btn-toolbar">'+
-
+		return '<div class="pull-right btn-toolbar">'+
 			'</div>'+
 			'<div class="pull-right btn-toolbar">'+
 				'<div class="btn-group">'+
