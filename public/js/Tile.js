@@ -11,8 +11,10 @@ window.Tile = Backbone.Model.extend({
 
 	},
   get: function (attr) {
-    if (this.attributes.fieldtypes[attr] == "daterange")
-    {
+    if (this.attributes['fieldtypes'] == undefined || this.attributes.fieldtypes[attr] == undefined)
+      return Backbone.Model.prototype.get.call(this, attr);
+
+    if(this.attributes.fieldtypes[attr] == "daterange"){
       return new Date(this.attributes[attr]).format('yyyy-m-dd');
     }
 

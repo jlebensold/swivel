@@ -10,14 +10,23 @@ window.SwivelView = Backbone.View.extend({
 				.attr('width',function(d) { return d.w; })
 				.attr('height',function(d) { return d.h; });
 			}
+
+
+    var inspector_template = ''+
+      '<h4><%= webTitle %></h4>'+
+      '<a href="<%= shortUrl %>">article</a>';
+
 		this.prepareFacets();
 		
 		this.gv = new GridView({collection:this.adapter.transform(), tileTemplate:template});
-		this.gv.w = 1000;
+		this.gv.w = 900;
 
 		this.toolbar = new ToolbarView({bucketable: this.options.bucketable });
 		this.toolbar.bind('bucketChange',this.updateBucketing);
-	},
+
+  	this.inspector = new InspectorView({template: inspector_template });
+    this.gv.bind('tileClicked',this.inspector.setModel);
+  },
 	
 	updateBucketing: function(val) {
 		this.gv.bucketize(val);
@@ -61,9 +70,10 @@ window.SwivelView = Backbone.View.extend({
 	render: function() {
 		$(this.el).append(
 				'<div class="toolbar row"></div>'+
-				'<div class="row">'+
-					'<div class="span3 leftpanel"></div>'+
-					'<div class="mainpanel"></div>'+
+				'<div class="row-fluid">'+
+					'<div class="span2 leftpanel"></div>'+
+					'<div class="span8 mainpanel"></div>'+
+					'<div class="span2 rightpanel"></div>'+
 				'</div>'
 		);
 
@@ -72,6 +82,7 @@ window.SwivelView = Backbone.View.extend({
 		},this);
 		$(this.el).find('.mainpanel').append(this.gv.render().el);
 		$(this.el).find('.toolbar').append(this.toolbar.render().el);
+		$(this.el).find('.rightpanel').append(this.inspector.render().el);
 		return this;
 	}
 

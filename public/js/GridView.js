@@ -168,6 +168,12 @@ window.GridView = Backbone.View.extend({
      	.attr("transform", "translate(" + ((this.w)) + "," + ((this.h)) + ") scale(-1,-1)")
      	.attr("width", this.w)
      	.attr("height", this.h);
+    
+    var self = this;
+    $(this.el).delegate("image",'click',function(k) {
+      k.preventDefault();
+      self.trigger('tileClicked',k.target.__data__.model);
+    });
 		this.loadData();
 		this.createVis();
 		this.animate();
