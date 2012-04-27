@@ -4,6 +4,16 @@ get '/test' do
 end
 
 
+get '/q/:term' do
+  content_type :json
+  key = config = YAML.load_file("#{File.dirname(__FILE__)}/config.yml")['key']
+  out = JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=1&page-size=50&api-key=#{key}").body)["response"]["results"]
+  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=2&page-size=50&api-key=#{key}").body)["response"]["results"])
+  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=3&page-size=50&api-key=#{key}").body)["response"]["results"])
+  out.to_json()
+end
+
+
 get '/' do
 	erb :index
 end

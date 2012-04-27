@@ -2,111 +2,92 @@
 <html lang="en"> 
   <head> 
     <meta charset="utf-8"> 
-    <title>Decision Tree</title> 
+    <title>Swivel</title> 
     <meta name="description" content=""> 
     <meta name="author" content=""> 
 
     <!-- Le styles --> 
     <link rel="stylesheet" type="text/css" href="bootstrap/application.css" >
-		<script src="js/jquery-1.7.2.min.js"></script> 
-		<script src="js/underscore.min.js"></script> 
-		<script src="js/bootstrap.min.js"></script> 
-		<script src="js/backbone.min.js"></script> 
-		<script src="js/tree.js"></script> 
-		<script src="js/GraphView.js"></script> 
-		<script src="js/Node.js"></script> 
-		<script src="js/Branch.js"></script> 
+    <link rel="stylesheet" href="/css/datepicker.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="/css/swivel.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="/css/jqui/jquery-ui-1.8.16.custom.css" type="text/css" media="screen"/>
+
+
+		<script src="js/vendor/jquery-1.7.2.min.js"></script> 
+		<script src="js/vendor/underscore.min.js"></script> 
+		<script src="js/vendor/bootstrap.min.js"></script> 
+		<script src="js/vendor/bootstrap-datepicker.js"></script> 
+		<script src="js/vendor/dateformat.js"></script> 
+		<script src="js/vendor/backbone.min.js"></script> 
+		<script src="js/vendor/jquery-ui-1.8.18.custom.min.js"></script> 
+		<script src="js/vendor/d3.v2.js"></script> 
+
+    
+    <script src="js/Adapter.js"></script>
+    <script src="js/FacetBaseView.js"></script>
+    <script src="js/FacetDaterangeView.js"></script>
+    <script src="js/FacetNumberrangeView.js"></script>
+    <script src="js/FacetStringView.js"></script>
+    <script src="js/GridView.js"></script>
+    <script src="js/SwivelView.js"></script>
+    <script src="js/Tile.js"></script>
+    <script src="js/ToolbarView.js"></script>
+
+
   </head> 
  
   <body>
 	<div class="navbar navbar-fixed-top"> 
       <div class="navbar-inner">
-		 	<a class="brand" href="#">Decision Tree</a>
+		 	<a class="brand" href="#">Swivel</a>
 	    <div class="container"> 
 
 	      <ul class="nav"> 
-	        <li class="active"><a href="#">Home</a></li> 
-	      </ul> 
-	    </div> 
+	        <li class="active"><a href="#">About</a></li> 
+        </ul>
+
+           <form class="navbar-search searchform" method="GET" action="/#">
+               <input name="term" type="text" class="span3" placeholder="Search" value="">
+           </form>
+      </div>  
 	  </div> 
 	</div>
-	<div class="container">
+	<div class="container-fluid">
 			<section class="row" style="margin-top: 40px;">
-				<h2>Decision Tree</h2>
-				<div class="tree" id="tree" style="background: #CFCFCF; width: 100%; heightype:500px;">
-
+        <div id="swivel"> 
 				</div>
 			</section>
 	  	<footer> 
       </footer> 
 	 
     </div> <!-- /container -->
-		<script>
-			var tree = {
-				branches:	[
-					{
-						txt: "Engage Vendor",
-						key:"engage"
-					},
-					{
-						txt: "Present RFP to business",
-						key:"present-to-business"
-					},
-					{
-						txt: "Business approval",
-						key:"bus-approval"
-					},
-					{
-						txt:	"Business declines",
-						key:		"bus-decline"
-					}
-				],
-				nodes: [
-					{
-						type: "decision",
-						inc: [],
-						out: ["engage"]
-					},
-					{
-						type: "decision",
-						inc: ["engage"],
-						out: ["present-to-business"]
-					},
-					{
-						type:		"chance",
-						inc:	["present-to-business"],
-						out:	["bus-approval","bus-decline"]
-					},
-					{
-						type:		"end",
-						inc:	["bus-approval"],
-						out: []
-					},
-					{
-						type:		"end",
-						inc:	["bus-decline"],
-						out: []
-					}
-				]
-			};
-		</script>
-		<script>
-			 $(function() { 
-				 window.app = new AppView({el: $("#tree")});
-				 window.app.setTree(tree);
-				 window.app.render();
-			 });
+    <script>
+
+      fields = [
+          ['score', function(item) { return item.fields.score; }, 'numberrange'],
+          ['thumbnail', function(item) {return item.fields.thumbnail;}],
+          ['shortUrl', function(item) { return item.fields.shortUrl;}],
+          ['sectionname', function(item) { return item.sectionName;},'collection'],
+          ['webpublicationdate', 'webPublicationDate','daterange'],
+          ['webTitle','webTitle'],
+      ];
+
+      $(function() {
+        $(".searchform").submit(function(e) {
+          e.preventDefault();
+          
+          load($("input[name='term']").val().replace(' ','+'));
+          $("input[name='term']").attr("disabled","disabled");
+        });
+      });
+      function load(term) {
+        $("#swivel").html("<h3>swiveling...</h3>");
+        $.get("/q/"+term,function(data) { 
+       	window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["score","tags","webpublicationdate",'sectionname']});
+    		$("#swivel").html(swivel.render().el);
+        $("input[name='term']").removeAttr("disabled");
+        });
+      }
 		 </script>
-		 <style>
-			.node {
-				border: 1px solid #000;
-				background: #FFF;
-				width: 20px;
-				height: 20px;
-				overflow: hidden;
-				clear: left;
-				float: left;
-			}
-		 </style>
-	</body> 
+		</body> 
 </html>
