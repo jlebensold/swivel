@@ -11,9 +11,8 @@ window.Tile = Backbone.Model.extend({
 
 	}
 });
-//window.Tile.bind("remove", function() {
-//  this.destroy();
-//});
+
+
 window.TileCollection = Backbone.Collection.extend({
 	model: Tile,
 	bucketing: '',
@@ -22,6 +21,30 @@ window.TileCollection = Backbone.Collection.extend({
   active: function() {
     return new TileCollection(this.where({active:true}));
   },
+  
+  isBucketing: function() { 
+    return this.bucketing.length == 0;
+  },
+
+  getBuckets: function() { 
+    return this.active().reduce(function(memo, item) {
+			memo[item.get(this.bucketing)] = memo[item.get(this.bucketing)] || { 
+				position:Object.keys(memo).length, 
+				count: 0
+			}
+			memo[item.get(this.bucketing)].count += 1;
+			return memo;
+		}, {},this);
+  },
+
+  getBucketData: function(height,width) { 
+    
+    console.log(this.getBuckets(),this.bucketing);
+    
+
+
+  },
+
 
 	facetfilter: function(facetview,range) {
 		

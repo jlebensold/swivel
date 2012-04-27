@@ -10,7 +10,7 @@ window.BWC = {
 
 window.GridView = Backbone.View.extend({
 	initialize: function() {
-		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'bucketize','loadDataEasy');
+		_.bindAll(this,'render','rowsAndColumns','sortTiles','removeTile','addTile','createVis','loadData','resizeCurrentTiles','tileClicked','animate', 'bucketize','loadGridData','loadBucketData','redrawBucketBoundaries');
 		this.collection = new TileCollection();
 		if (this.options.collection != undefined) {
 			_.each(this.options.collection,function(t) {
@@ -70,82 +70,72 @@ window.GridView = Backbone.View.extend({
 	},
 
 	bucketize: function(bucketing) {
+
+
 		this.collection.bucketing = bucketing;
-		this.buckets = this.collection.active().reduce(function(memo, item) {
-			memo[item.get(bucketing)] = memo[item.get(bucketing)] || { 
-				position:Object.keys(memo).length, 
-				count: 0
-			}
-			memo[item.get(bucketing)].count += 1;
-			return memo;
-		}, {},this);
-		this.loadData();
+		this.buckets = this.collection.getBuckets();
+    this.loadData();
 
-		//TODO: move this out
-
+    this.redrawBucketBoundaries();
 	},
 
 	loadData: function() {
-			if (this.collection.bucketing.length == 0) {
-				this.loadDataEasy();
-			}
-			else	{
-				_.each(this.buckets,function(k) {
-			k.col = 0;
-			k.row = 0;
-			k.lastCol = 0;
-			k.iterator =  0;
-
-				});
-
-
-
-				var maxBucketSize = _.max(this.buckets, function(item) {return item.count;} );
-				
-				var numBuckets = Object.keys(this.buckets).length;
-				// split into the number of lists we have for buckets
-				var rc = this.rowsAndColumns(numBuckets,maxBucketSize.count);
-				
-
-			this.data = this.collection.active().map(function(t,iterator) {
-					var bucketing = t.get(this.collection.bucketing);
-					var perBucketIterator = this.buckets[bucketing].iterator++;
-
-					var col = perBucketIterator % rc.columns;
-					if (rc.columns == 0)
-					{
-						this.buckets[bucketing].lastCol = 1;
-						col = 0
-					}
-					//single column edge case
-					if (rc.columns == 1 )
-					{
-						this.buckets[bucketing].row = perBucketIterator; 
-					}
-					else if (this.buckets[bucketing].lastCol > col)
-					{
-						this.buckets[bucketing].row++;
-					}
-					this.buckets[bucketing].lastCol = col;
-					var offset = this.buckets[bucketing].position * rc.width;
-					return { 
-									 h: rc.tileSize, 
-									 w: rc.tileSize, 
-									 x: offset + (col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4)))), 
-									 y: (this.buckets[bucketing].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
-									 row: this.buckets[bucketing].row,
-									 col: col,
-									 model: t,
-									 cid: t.cid
-								 };
-
-			},this);
-
-			}
-
+			if (this.collection.isBucketing())
+				this.loadGridData();
+			else
+        this.loadBucketData();
 	},
+  loadBucketData: function() { 
+			_.each(this.buckets,function(k) {
+        k.col = 0;
+        k.row = 0;
+        k.lastCol = 0;
+        k.iterator =  0;
+			});
 
-	loadDataEasy: function() {
+			var maxBucketSize = _.max(this.buckets, function(item) {return item.count;} );
+			
+			var numBuckets = Object.keys(this.buckets).length;
+			// split into the number of lists we have for buckets
+			var rc = this.rowsAndColumns(numBuckets,maxBucketSize.count);
+			
+
+		this.data = this.collection.active().map(function(t,iterator) {
+				var bucketing = t.get(this.collection.bucketing);
+				var perBucketIterator = this.buckets[bucketing].iterator++;
+
+				var col = perBucketIterator % rc.columns;
+				if (rc.columns == 0)
+				{
+					this.buckets[bucketing].lastCol = 1;
+					col = 0
+				}
+				//single column edge case
+				if (rc.columns == 1 )
+				{
+					this.buckets[bucketing].row = perBucketIterator; 
+				}
+				else if (this.buckets[bucketing].lastCol > col)
+				{
+					this.buckets[bucketing].row++;
+				}
+				this.buckets[bucketing].lastCol = col;
+				var offset = this.buckets[bucketing].position * rc.width;
+				return { 
+								 h: rc.tileSize, 
+								 w: rc.tileSize, 
+								 x: offset + (col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4)))), 
+								 y: (this.buckets[bucketing].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
+								 row: this.buckets[bucketing].row,
+								 col: col,
+								 model: t,
+								 cid: t.cid
+							 };
+
+		},this);
+  },
+
+	loadGridData: function() {
 			var rc = this.rowsAndColumns(1, this.collection.active().length);
 			var row = 0;
 			var lastCol = 0;
@@ -173,7 +163,7 @@ window.GridView = Backbone.View.extend({
 
 		this.vis = d3.select(this.el).append("svg")
       .attr("width", this.w+4)
-      .attr("height", this.h+4)
+      .attr("height", this.h+30) // give room for the bucket names
 			.attr("border","1")
 	   .append("g")
      	.attr("transform", "translate(" + ((this.w)) + "," + ((this.h)) + ") scale(-1,-1)")
@@ -195,7 +185,7 @@ window.GridView = Backbone.View.extend({
 
 		 this.vis.selectAll("rect")
       .data(this.data, function(d) {return d.cid})
-				.attr("height", function(d) { console.log(d.cid, d.h);return d.h; } )
+				.attr("height", function(d) { return d.h; } )
 				.attr("width", function(d) { return d.w; } );
 
 		 this.vis.selectAll("image")
@@ -212,6 +202,12 @@ window.GridView = Backbone.View.extend({
       .remove();
   },
 
+  redrawBucketBoundaries: function() {
+//    this.vis.selectAll(".buckets").data(this.collection.getBucketData());
+    console.log(this.collection.getBucketData());
+  },
+
+
 	createVis: function(){
 
 		var rects = this.vis.selectAll(".tiles")
@@ -223,12 +219,15 @@ window.GridView = Backbone.View.extend({
         var x = (0.5 - Math.random())*10000;
         var y =  (0.5 - Math.random())*10000;
         return "translate("+x+","+y+")";
-      }).append("rect")
+      });
+    rects.append("rect")
       .attr("class", "rect")
 			.attr("id",function(d) { return d.cid })
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
       .attr("fill", function(d) { return 'black'; });
+
+
 
 
     if (this.tileTemplate) this.tileTemplate(rects);
