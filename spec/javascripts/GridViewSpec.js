@@ -40,8 +40,7 @@ describe("GridView", function() {
 		expect($("body svg rect").length).toEqual(7);
 		
 		gv.collection.add({meta:{title: "asd"}});
-
-		expect($("body svg rect").length).toEqual(8);
+		expect($("body svg .tiles").length).toEqual(8);
 	});
 
 	it("should animate in and out",function() { 

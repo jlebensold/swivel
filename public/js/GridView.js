@@ -71,16 +71,14 @@ window.GridView = Backbone.View.extend({
 
 	bucketize: function(bucketing) {
 
-
 		this.collection.bucketing = bucketing;
 		this.buckets = this.collection.getBuckets();
     this.loadData();
-
     this.redrawBucketBoundaries();
 	},
 
 	loadData: function() {
-			if (this.collection.isBucketing())
+			if (!this.collection.isBucketing())
 				this.loadGridData();
 			else
         this.loadBucketData();
@@ -121,11 +119,12 @@ window.GridView = Backbone.View.extend({
 				}
 				this.buckets[bucketing].lastCol = col;
 				var offset = this.buckets[bucketing].position * rc.width;
+        var padding = 5;
 				return { 
 								 h: rc.tileSize, 
 								 w: rc.tileSize, 
-								 x: offset + (col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4)))), 
-								 y: (this.buckets[bucketing].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))),
+								 x: offset + (col * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4)))) + padding, 
+								 y: (this.buckets[bucketing].row ) * (rc.tileSize + .5*(rc.tileSize * ((1 - this.margin) / 4))) + padding,
 								 row: this.buckets[bucketing].row,
 								 col: col,
 								 model: t,
@@ -176,7 +175,7 @@ window.GridView = Backbone.View.extend({
 	},
 
   animate: function() {
-
+     this.redrawBucketBoundaries();
      var animation = this.vis.selectAll(".tiles")
       .data(this.data, function(d) {return d.cid})
 		  .transition().duration(this.animationDuration);
@@ -203,8 +202,30 @@ window.GridView = Backbone.View.extend({
   },
 
   redrawBucketBoundaries: function() {
-//    this.vis.selectAll(".buckets").data(this.collection.getBucketData());
-    console.log(this.collection.getBucketData());
+    var data = this.collection.getBucketData(this.h,this.w);
+    var vis = d3.select(this.el).select("svg");
+    vis.selectAll(".bucketcontainer").remove();
+    vis.selectAll(".buckettext").remove();
+    if (!this.collection.isBucketing()) return;
+    vis.selectAll(".buckettext").remove();
+    var bucket = vis.selectAll(".bucketcontainer").data(data);
+      bucket.enter()
+      .insert("rect",":first-child")
+      .attr("class","bucketcontainer")
+      .attr("x", function(d) { return d.x; } )
+      .attr("rx", 5)
+      .attr("ry", 5)
+      .attr("y", function(d) { return d.y; } )
+      .attr("height", function(d) { return d.h; } )
+      .attr("width", function(d) { return d.w; } );
+  
+    bucket.enter()
+      .append("text")
+        .text(function(d) { return d.txt; })
+        .attr("class","buckettext")
+        .attr("x", function(d) { return d.x + d.w / 2; } )
+        .attr("y", function(d) { return d.h + d.y - 4; } );
+
   },
 
 
@@ -226,7 +247,6 @@ window.GridView = Backbone.View.extend({
       .attr("height", function(d) { return d.h; } )
       .attr("width", function(d) { return d.w; } )
       .attr("fill", function(d) { return 'black'; });
-
 
 
 

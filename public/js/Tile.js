@@ -23,10 +23,10 @@ window.TileCollection = Backbone.Collection.extend({
   },
   
   isBucketing: function() { 
-    return this.bucketing.length == 0;
+    return this.bucketing.length != 0;
   },
 
-  getBuckets: function() { 
+  getBuckets: function() {
     return this.active().reduce(function(memo, item) {
 			memo[item.get(this.bucketing)] = memo[item.get(this.bucketing)] || { 
 				position:Object.keys(memo).length, 
@@ -39,10 +39,21 @@ window.TileCollection = Backbone.Collection.extend({
 
   getBucketData: function(height,width) { 
     
-    console.log(this.getBuckets(),this.bucketing);
-    
+    var buckets = this.getBuckets();
+    var numBuckets =  Object.keys(buckets).length;
+    var containerWidth = Math.floor(width / numBuckets);
+    var data = [];
+    _.each(buckets,function(b,k) { 
 
+      b.w = containerWidth-4;
+      b.x = b.position * containerWidth + 0;
+      b.y = 20;
+      b.h = height;
+      b.txt = k;
 
+      data.push(b);
+    });
+    return data;
   },
 
 

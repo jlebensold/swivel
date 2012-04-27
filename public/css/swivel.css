@@ -1,16 +1,12 @@
-.area {
-  fill: lightsteelblue;
-}
+.bucketcontainer {
+	stroke: #CCC;
 
-.line {
-  fill: none;
-  stroke: steelblue;
+  fill: #FAFAFA;
   stroke-width: 1.5px;
+
 }
-.rect {
-}
-.tile {
-	stroke: black;
-  fill: red;
-  stroke-width: 1.5px;
+.buckettext {
+  color: #000;
+  font-size: 15px;
+  text-anchor: middle;
 }

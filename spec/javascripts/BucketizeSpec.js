@@ -1,3 +1,4 @@
+var gv;
 describe("Bucketize", function () {
 	beforeEach(function() {
 		$("#testbed").remove();
@@ -32,9 +33,13 @@ describe("Bucketize", function () {
     gv.collection.add({ title:"Happy Panda", description:"a different description" },{silent:true});
     gv.collection.add({ title:"Rabbit monkey", description:"a different description" },{silent:true});
     gv.collection.add({ title:"Rabbit monkey", description:"a different description" },{silent:true});
-    gv.bucketize("title");
 
 
     $("#testbed").html(gv.render().el);
-                                                                                                      });
+    setTimeout(function() { 
+
+      gv.bucketize("title");
+      gv.animate();
+    },1000);
+  });
 });
