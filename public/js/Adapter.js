@@ -10,14 +10,21 @@ window.Adapter = Backbone.Model.extend({
   transform: function(){
 		if(this.translated.length > 0)
 			return this.translated;
+      
+    var fields = {};
+      _.each(this.fields,function(f) {
+        fields[f[0]] = f[2];
+    });
+
+
     _.each(this.data, function(item) {
-      var d = {}
+
+      var d = { fieldtypes : fields };
       _.each(this.fields, function(field) {
         d[field[0]] = typeof(field[1]) == 'function' ? field[1](item) : item[field[1]];
       });
       this.translated.push(d);
     },this);
-
     return this.translated;
   },
 
@@ -34,7 +41,6 @@ window.Adapter = Backbone.Model.extend({
 			},this);
 		},this);
 		this.faceted = _.compact(_.map(this.faceted,this.convertField,this));
-		
 		return this.faceted;
   },
 
