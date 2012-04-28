@@ -17,7 +17,7 @@ Swivel relies on a simple Sinatra back end, jasmine unit tests, backboneJS, unde
 
 running it requires creating a config.yml file with the following:
    
-        key: XXXXXXXXXXXXXXXXXXXXXX
+    key: XXXXXXXXXXXXXXXXXXXXXX
 
 (where XXXX... is your API Key for the Guardian newspaper)
 
