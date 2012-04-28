@@ -1,33 +1,33 @@
+*Swivel*
+Swivel is a proof of concept for a data visualization tool that enables viewing tiles of data and grouping them into "buckets".
+
+The goal is to write an HTML5 tool for splunking through chunks of data.
+
+<a href="http://swivel.minidoc.tv">Visit a working example</a>.
+
+
 *Getting Started* 
+thin --debug --rackup config.ru start 
+
+*Running Tests* 
 rake jasmine
 
-*Notes*
-GridView
-TileCollection
-Tile
+*Installation*
+Swivel relies on a simple Sinatra back end, jasmine unit tests, backboneJS, underscoreJS, D3, jQuery UI (for the range control), jQuery, and bootstrap CSS.
 
-Given a list of tiles
-THey should be drawn at a resonable width
+running it requires creating a config.yml file with the following:
+key: XXXXXXXXXXXXXXXXXXXXXX
 
-Button is clicked
-New grid is created and transition is done
+(where XXXX... is your API Key for the Guardian newspaper)
 
+*Requirements*
+- a free API Key from the Guardian newspaper: http://content.guardianapis.com  
 
-____
+*TODO*
 
-__ __
-
-
-tWidth / widthGrid = rowLength
-rowCount = 0
-x = tWidth * index 
-
-if (index % rowlength) == 0
-  y = tHeight * rowCount
-    rowCount ++
-
-
-    var data =  [{x:0, y: 0, w:10, h:10}]
-
-
-    d3.awesome.data(data).enter().append("rect").needtofigureouthowtousedata().
+Much needs to be done: 
+- zoom support
+- ability to sort (we have tests for this, but the toolbar and views are not implemented)
+- better inspector for the Guardian sample
+- ability to drill down or drill up on date buckets (e.g. go from day to month to year bucketing)
+- investigate looking at using a canvas-based implementation (with a framework like KineticJS) for performance improvements on larger data sets.
