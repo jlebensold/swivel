@@ -16,7 +16,8 @@ rake jasmine
 Swivel relies on a simple Sinatra back end, jasmine unit tests, backboneJS, underscoreJS, D3, jQuery UI (for the range control), jQuery, and bootstrap CSS.
 
 running it requires creating a config.yml file with the following:
-    key: XXXXXXXXXXXXXXXXXXXXXX
+   
+        key: XXXXXXXXXXXXXXXXXXXXXX
 
 (where XXXX... is your API Key for the Guardian newspaper)
 
