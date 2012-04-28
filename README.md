@@ -1,4 +1,4 @@
-*Swivel*
+#Swivel
 Swivel is a proof of concept for a data visualization tool that enables viewing tiles of data and grouping them into "buckets".
 
 The goal is to write an HTML5 tool for splunking through chunks of data.
@@ -6,24 +6,24 @@ The goal is to write an HTML5 tool for splunking through chunks of data.
 <a href="http://swivel.minidoc.tv">Visit a working example</a>.
 
 
-*Getting Started* 
+#Getting Started 
 thin --debug --rackup config.ru start 
 
-*Running Tests* 
+#Running Tests 
 rake jasmine
 
-*Installation*
+#Installation
 Swivel relies on a simple Sinatra back end, jasmine unit tests, backboneJS, underscoreJS, D3, jQuery UI (for the range control), jQuery, and bootstrap CSS.
 
 running it requires creating a config.yml file with the following:
-key: XXXXXXXXXXXXXXXXXXXXXX
+    key: XXXXXXXXXXXXXXXXXXXXXX
 
 (where XXXX... is your API Key for the Guardian newspaper)
 
-*Requirements*
+#Requirements
 - a free API Key from the Guardian newspaper: http://content.guardianapis.com  
 
-*TODO*
+#TODO
 
 Much needs to be done: 
 - zoom support
