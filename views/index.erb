@@ -84,7 +84,7 @@
       function load(term) {
         $("#swivel").html("<h3>swiveling...</h3>");
         $.get("/q/"+term,function(data) { 
-       	window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["score","tags","webpublicationdate",'sectionname']});
+       	window.swivel = new SwivelView({adapter:{data:data,fields:fields},bucketable:["webpublicationdate",'sectionname','score']});
     		$("#swivel").html(swivel.render().el);
         $("input[name='term']").removeAttr("disabled");
         });
