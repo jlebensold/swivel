@@ -7,9 +7,17 @@ end
 get '/q/:term' do
   content_type :json
   key = config = YAML.load_file("#{File.dirname(__FILE__)}/config.yml")['key']
-  out = JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=1&page-size=50&api-key=#{key}").body)["response"]["results"]
-  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=2&page-size=50&api-key=#{key}").body)["response"]["results"])
-  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search?q=#{params[:term]}&format=json&show-fields=all&show-tags=all&page=3&page-size=50&api-key=#{key}").body)["response"]["results"])
+  options = {
+    :format => "json",
+    :showFields => "shortUrl,score,thumbnail",
+    :q => params[:term],
+    :apiKey => key,
+    :pageSize => 50,
+    :orderBy => "relevance"
+  }
+  out = JSON.parse(HTTParty.get("http://content.guardianapis.com/search", :query => options).body)["response"]["results"]
+  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search",:query => options.merge({:page=>2})).body)["response"]["results"])
+  out.concat(JSON.parse(HTTParty.get("http://content.guardianapis.com/search",:query => options.merge({:page=>3})).body)["response"]["results"])
   out.to_json()
 end
 
