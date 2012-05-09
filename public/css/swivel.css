@@ -10,3 +10,8 @@
   font-size: 15px;
   text-anchor: middle;
 }
+  <style type="text/css">
+      .banner label {
+                display:inline;
+                    }
+                      </style>
